@@ -4,7 +4,7 @@
 
 这个项目以展示和自用为主，使用 MIT 协议开源，默认不接收外部代码贡献。
 
-![x2markdown 示意图](./docs/images/overview.svg)
+![x2markdown 示意图](./docs/images/overview.svg?v=2)
 
 ## 解决什么问题
 
