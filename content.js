@@ -938,15 +938,23 @@
   }
 
   async function copyToClipboard(text) {
+    if (copyWithExecCommand(text)) {
+      return;
+    }
+
     if (navigator.clipboard && typeof navigator.clipboard.writeText === "function") {
       try {
         await navigator.clipboard.writeText(text);
         return;
       } catch (error) {
-        console.warn("[x2markdown] Clipboard API 失败，改用 execCommand", error);
+        // Some pages reject Clipboard API calls in content scripts even when fallback copy works.
       }
     }
 
+    throw new Error("复制失败，请手动重试");
+  }
+
+  function copyWithExecCommand(text) {
     const textarea = document.createElement("textarea");
     textarea.value = text;
     textarea.setAttribute("readonly", "true");
@@ -957,14 +965,14 @@
     textarea.style.left = "0";
 
     document.body.appendChild(textarea);
-    textarea.focus();
-    textarea.select();
-
-    const success = document.execCommand("copy");
-    textarea.remove();
-
-    if (!success) {
-      throw new Error("复制失败，请手动重试");
+    try {
+      textarea.focus();
+      textarea.select();
+      return document.execCommand("copy");
+    } catch (error) {
+      return false;
+    } finally {
+      textarea.remove();
     }
   }
 
