@@ -1,0 +1,29 @@
+<svg width="1200" height="720" viewBox="0 0 1200 720" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1200" height="720" rx="32" fill="#F5F7FB"/>
+  <rect x="48" y="48" width="500" height="624" rx="28" fill="#FFFFFF" stroke="#D7DFEA" stroke-width="2"/>
+  <rect x="72" y="84" width="280" height="30" rx="8" fill="#101828"/>
+  <rect x="72" y="136" width="120" height="18" rx="6" fill="#98A2B3"/>
+  <rect x="72" y="178" width="420" height="18" rx="6" fill="#344054" fill-opacity="0.12"/>
+  <rect x="72" y="210" width="390" height="18" rx="6" fill="#344054" fill-opacity="0.12"/>
+  <rect x="72" y="242" width="405" height="18" rx="6" fill="#344054" fill-opacity="0.12"/>
+  <rect x="72" y="292" width="420" height="220" rx="20" fill="#E4E7EC"/>
+  <circle cx="470" cy="112" r="24" fill="#0EA5E9"/>
+  <circle cx="470" cy="112" r="9" fill="#FFFFFF"/>
+  <rect x="314" y="166" width="220" height="172" rx="24" fill="#FFFFFF" stroke="#D7DFEA" stroke-width="2"/>
+  <rect x="338" y="194" width="172" height="18" rx="8" fill="#101828"/>
+  <rect x="338" y="238" width="132" height="14" rx="7" fill="#475467" fill-opacity="0.18"/>
+  <rect x="338" y="274" width="156" height="14" rx="7" fill="#475467" fill-opacity="0.18"/>
+  <text x="338" y="205" fill="#101828" font-family="Helvetica, Arial, sans-serif" font-size="18" font-weight="700">复制为 Markdown</text>
+  <rect x="610" y="48" width="542" height="624" rx="28" fill="#0F172A"/>
+  <text x="650" y="110" fill="#E2E8F0" font-family="SFMono-Regular, Consolas, monospace" font-size="22" font-weight="700"># X2Markdown 输出</text>
+  <text x="650" y="166" fill="#CBD5E1" font-family="SFMono-Regular, Consolas, monospace" font-size="20">作者: Example Author (@example)</text>
+  <text x="650" y="204" fill="#CBD5E1" font-family="SFMono-Regular, Consolas, monospace" font-size="20">时间: 2026-03-18T08:30:00.000Z</text>
+  <text x="650" y="242" fill="#CBD5E1" font-family="SFMono-Regular, Consolas, monospace" font-size="20">链接: https://x.com/example/status/...</text>
+  <text x="650" y="306" fill="#F8FAFC" font-family="SFMono-Regular, Consolas, monospace" font-size="20">正文:</text>
+  <text x="650" y="348" fill="#CBD5E1" font-family="SFMono-Regular, Consolas, monospace" font-size="20">把 X 的正文、图片链接和时间一次复制出来，</text>
+  <text x="650" y="384" fill="#CBD5E1" font-family="SFMono-Regular, Consolas, monospace" font-size="20">直接粘贴给 AI，不再受登录墙影响。</text>
+  <text x="650" y="456" fill="#F8FAFC" font-family="SFMono-Regular, Consolas, monospace" font-size="20">图片:</text>
+  <text x="650" y="498" fill="#38BDF8" font-family="SFMono-Regular, Consolas, monospace" font-size="20">- [图片 1](https://pbs.twimg.com/media/...)</text>
+  <path d="M548 360C616 360 610 360 642 360" stroke="#0EA5E9" stroke-width="8" stroke-linecap="round"/>
+  <path d="M625 338L652 360L625 382" stroke="#0EA5E9" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
