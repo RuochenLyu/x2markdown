@@ -48,6 +48,7 @@
     'section[data-block="true"]',
     '[data-testid="markdown-code-block"]'
   ].join(", ");
+  const UI_LANGUAGE = getUiLanguage();
 
   document.addEventListener("contextmenu", handleContextMenuEvent, true);
 
@@ -62,7 +63,7 @@
           sendResponse({ ok: true });
         })
         .catch((error) => {
-          const errorMessage = error instanceof Error ? error.message : "复制失败";
+          const errorMessage = error instanceof Error ? error.message : t("errorCopyFailedGeneric", undefined, "Copy failed");
           console.error("[x2markdown] 复制失败", error);
           showToast(errorMessage);
           sendResponse({
@@ -86,7 +87,7 @@
     const markdown = buildMarkdown(payload);
 
     await copyToClipboard(markdown);
-    showToast("已复制为 Markdown");
+    showToast(t("toastCopiedAsMarkdown", undefined, "Copied as Markdown"));
   }
 
   function getSupportedPageType(pathname) {
@@ -173,7 +174,7 @@
     let currentArticle = safelyResolveArticle(resolveArticle) || article;
 
     if (!(currentArticle instanceof HTMLElement)) {
-      throw new Error("未找到当前帖子");
+      throw new Error(t("errorPostNotFound", undefined, "Current post not found"));
     }
 
     for (let index = 0; index < 4; index += 1) {
@@ -188,7 +189,7 @@
 
       currentArticle = safelyResolveArticle(resolveArticle) || currentArticle;
       if (!(currentArticle instanceof HTMLElement)) {
-        throw new Error("未找到当前帖子");
+        throw new Error(t("errorPostNotFound", undefined, "Current post not found"));
       }
     }
 
@@ -251,7 +252,7 @@
     }
 
     clearContextMenuTarget();
-    throw new Error("未找到当前帖子");
+    throw new Error(t("errorPostNotFound", undefined, "Current post not found"));
   }
 
   function clearContextMenuTarget() {
@@ -304,7 +305,7 @@
 
   function getStatusPageArticle() {
     if (getSupportedPageType(location.pathname) !== "status") {
-      throw new Error("当前不是受支持的帖子页面");
+      throw new Error(t("errorUnsupportedPostPage", undefined, "This is not a supported post page"));
     }
 
     const statusId = extractPathId(location.pathname, "status");
@@ -316,7 +317,7 @@
     const article = mainCandidate || candidates[0];
 
     if (!(article instanceof HTMLElement)) {
-      throw new Error("未找到当前帖子正文");
+      throw new Error(t("errorCurrentPostBodyNotFound", undefined, "Current post body not found"));
     }
 
     return article;
@@ -355,7 +356,7 @@
 
   function getArticlePageRoot() {
     if (getSupportedPageType(location.pathname) !== "article") {
-      throw new Error("当前不是受支持的文章页面");
+      throw new Error(t("errorUnsupportedArticlePage", undefined, "This is not a supported article page"));
     }
 
     const longformRoot = getLongformRoot();
@@ -365,12 +366,12 @@
 
     const main = document.querySelector("main");
     if (!(main instanceof HTMLElement)) {
-      throw new Error("未找到文章容器");
+      throw new Error(t("errorArticleContainerNotFound", undefined, "Article container not found"));
     }
 
     const title = firstVisibleElement(main.querySelectorAll("h1"));
     if (!title) {
-      throw new Error("未找到文章标题");
+      throw new Error(t("errorArticleTitleNotFound", undefined, "Article title not found"));
     }
 
     return main;
@@ -384,7 +385,7 @@
     const pattern = kind === "status" ? PATH_PATTERNS.status : PATH_PATTERNS.article;
     const match = pathname.match(pattern);
     if (!match) {
-      throw new Error("页面路径不受支持");
+      throw new Error(t("errorUnsupportedPath", undefined, "Page path is not supported"));
     }
 
     const segments = pathname.split("/").filter(Boolean);
@@ -393,7 +394,7 @@
 
   function extractPostData(article) {
     if (!(article instanceof HTMLElement)) {
-      throw new Error("帖子节点无效");
+      throw new Error(t("errorInvalidPostNode", undefined, "Invalid post node"));
     }
 
     const statusId =
@@ -413,19 +414,19 @@
     });
 
     if (!author.displayName && !author.handle) {
-      throw new Error("未找到作者信息");
+      throw new Error(t("errorAuthorInfoNotFound", undefined, "Author information not found"));
     }
 
     if (!timeElement) {
-      throw new Error("未找到发布时间");
+      throw new Error(t("errorPublishTimeNotFound", undefined, "Publish time not found"));
     }
 
     if (!statusUrl) {
-      throw new Error("未找到帖子链接");
+      throw new Error(t("errorPostLinkNotFound", undefined, "Post link not found"));
     }
 
     if (!body) {
-      throw new Error("未找到正文内容");
+      throw new Error(t("errorBodyNotFound", undefined, "Body content not found"));
     }
 
     return {
@@ -442,12 +443,12 @@
 
   function extractArticleData(root) {
     if (!(root instanceof HTMLElement)) {
-      throw new Error("文章节点无效");
+      throw new Error(t("errorInvalidArticleNode", undefined, "Invalid article node"));
     }
 
     const titleElement = getArticleTitleElement(root);
     if (!titleElement) {
-      throw new Error("未找到文章标题");
+      throw new Error(t("errorArticleTitleNotFound", undefined, "Article title not found"));
     }
 
     const author = extractLongformAuthor(root);
@@ -457,7 +458,7 @@
     const images = extractLongformImages(root).filter((url) => !longformBodyResult.inlineImageUrls.includes(url));
 
     if (!body) {
-      throw new Error("未找到文章正文");
+      throw new Error(t("errorArticleBodyNotFound", undefined, "Article body not found"));
     }
 
     return {
@@ -753,7 +754,9 @@
   }
 
   function renderLongformMediaLinks(imageUrls) {
-    return imageUrls.map((url, index) => `[图片 ${index + 1}](${url})`).join("\n");
+    return imageUrls.map((url, index) => `[${
+      t("markdownImageLabel", String(index + 1), `Image ${index + 1}`)
+    }](${url})`).join("\n");
   }
 
   function extractLongformMediaUrls(root) {
@@ -1089,27 +1092,27 @@
       lines.push(`# ${payload.title}`, "");
     }
 
-    lines.push(`作者: ${formatAuthor(payload.author)}`);
+    lines.push(t("markdownAuthorLine", formatAuthor(payload.author), `Author: ${formatAuthor(payload.author)}`));
 
     if (payload.time) {
-      lines.push(`时间: ${payload.time}`);
+      lines.push(t("markdownTimeLine", payload.time, `Time: ${payload.time}`));
     }
 
-    lines.push(`链接: ${payload.url}`, "", "正文:", payload.body);
+    lines.push(t("markdownLinkLine", payload.url, `Link: ${payload.url}`), "", t("markdownBodyLabel", undefined, "Body:"), payload.body);
 
     if (quote) {
-      lines.push("", "引用内容:");
-      lines.push(`作者: ${formatAuthor(quote.author)}`);
+      lines.push("", t("markdownQuoteSectionLabel", undefined, "Quoted Post:"));
+      lines.push(t("markdownAuthorLine", formatAuthor(quote.author), `Author: ${formatAuthor(quote.author)}`));
 
       if (quote.time) {
-        lines.push(`时间: ${quote.time}`);
+        lines.push(t("markdownTimeLine", quote.time, `Time: ${quote.time}`));
       }
 
       if (quote.url) {
-        lines.push(`链接: ${quote.url}`);
+        lines.push(t("markdownLinkLine", quote.url, `Link: ${quote.url}`));
       }
 
-      lines.push("正文:");
+      lines.push(t("markdownBodyLabel", undefined, "Body:"));
       lines.push(
         quote.body
           .split("\n")
@@ -1118,17 +1121,17 @@
       );
 
       if (quote.images.length > 0) {
-        lines.push("", "引用图片:");
+        lines.push("", t("markdownQuotedImageSectionLabel", undefined, "Quoted Images:"));
         quote.images.forEach((imageUrl, index) => {
-          lines.push(`- [引用图片 ${index + 1}](${imageUrl})`);
+          lines.push(`- [${t("markdownQuotedImageLabel", String(index + 1), `Quoted Image ${index + 1}`)}](${imageUrl})`);
         });
       }
     }
 
     if (images.length > 0) {
-      lines.push("", "图片:");
+      lines.push("", t("markdownImageSectionLabel", undefined, "Images:"));
       images.forEach((imageUrl, index) => {
-        lines.push(`- [图片 ${index + 1}](${imageUrl})`);
+        lines.push(`- [${t("markdownImageLabel", String(index + 1), `Image ${index + 1}`)}](${imageUrl})`);
       });
     }
 
@@ -1157,7 +1160,7 @@
       return `${author.displayName} (${author.handle})`;
     }
 
-    return author.displayName || author.handle || "未知作者";
+    return author.displayName || author.handle || t("unknownAuthor", undefined, "Unknown author");
   }
 
   async function copyToClipboard(text) {
@@ -1174,7 +1177,7 @@
       }
     }
 
-    throw new Error("复制失败，请手动重试");
+    throw new Error(t("errorClipboardRetry", undefined, "Copy failed, please try again manually"));
   }
 
   function copyWithExecCommand(text) {
@@ -1386,6 +1389,23 @@
     return match ? match[1] : "";
   }
 
+  function t(messageName, substitutions, fallback = "") {
+    const message =
+      typeof chrome !== "undefined" && chrome.i18n && typeof chrome.i18n.getMessage === "function"
+        ? chrome.i18n.getMessage(messageName, substitutions)
+        : "";
+
+    return message || fallback || messageName;
+  }
+
+  function getUiLanguage() {
+    if (typeof chrome !== "undefined" && chrome.i18n && typeof chrome.i18n.getUILanguage === "function") {
+      return chrome.i18n.getUILanguage();
+    }
+
+    return navigator.language || "zh-CN";
+  }
+
   function wait(milliseconds) {
     return new Promise((resolve) => {
       window.setTimeout(resolve, milliseconds);
@@ -1400,7 +1420,7 @@
     if (dateTime) {
       const date = new Date(dateTime);
       if (!Number.isNaN(date.getTime())) {
-        return new Intl.DateTimeFormat("zh-CN", {
+        return new Intl.DateTimeFormat(UI_LANGUAGE, {
           year: "numeric",
           month: "2-digit",
           day: "2-digit",

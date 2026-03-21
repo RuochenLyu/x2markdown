@@ -1,0 +1,152 @@
+{
+  "extName": {
+    "message": "X2Markdown",
+    "description": "扩展名称"
+  },
+  "extDescription": {
+    "message": "在受支持的 x.com 页面右键复制为 Markdown，一键整理标题、作者、时间、正文和图片链接。",
+    "description": "扩展描述"
+  },
+  "contextMenuCopyAsMarkdown": {
+    "message": "复制为 Markdown",
+    "description": "右键菜单标题"
+  },
+  "toastCopiedAsMarkdown": {
+    "message": "已复制为 Markdown",
+    "description": "复制成功提示"
+  },
+  "errorCopyFailedGeneric": {
+    "message": "复制失败",
+    "description": "通用复制失败提示"
+  },
+  "errorPostNotFound": {
+    "message": "未找到当前帖子",
+    "description": "当前帖子不存在或无法定位"
+  },
+  "errorUnsupportedPostPage": {
+    "message": "当前不是受支持的帖子页面",
+    "description": "status 页面不受支持"
+  },
+  "errorCurrentPostBodyNotFound": {
+    "message": "未找到当前帖子正文",
+    "description": "status 页面主贴正文不存在"
+  },
+  "errorUnsupportedArticlePage": {
+    "message": "当前不是受支持的文章页面",
+    "description": "article 页面不受支持"
+  },
+  "errorArticleContainerNotFound": {
+    "message": "未找到文章容器",
+    "description": "文章容器不存在"
+  },
+  "errorArticleTitleNotFound": {
+    "message": "未找到文章标题",
+    "description": "文章标题不存在"
+  },
+  "errorUnsupportedPath": {
+    "message": "页面路径不受支持",
+    "description": "页面路径不匹配支持规则"
+  },
+  "errorInvalidPostNode": {
+    "message": "帖子节点无效",
+    "description": "帖子节点不是有效元素"
+  },
+  "errorAuthorInfoNotFound": {
+    "message": "未找到作者信息",
+    "description": "作者信息不存在"
+  },
+  "errorPublishTimeNotFound": {
+    "message": "未找到发布时间",
+    "description": "发布时间不存在"
+  },
+  "errorPostLinkNotFound": {
+    "message": "未找到帖子链接",
+    "description": "帖子链接不存在"
+  },
+  "errorBodyNotFound": {
+    "message": "未找到正文内容",
+    "description": "正文内容不存在"
+  },
+  "errorInvalidArticleNode": {
+    "message": "文章节点无效",
+    "description": "文章节点不是有效元素"
+  },
+  "errorArticleBodyNotFound": {
+    "message": "未找到文章正文",
+    "description": "文章正文不存在"
+  },
+  "errorClipboardRetry": {
+    "message": "复制失败，请手动重试",
+    "description": "剪贴板写入失败提示"
+  },
+  "markdownAuthorLine": {
+    "message": "作者: $1",
+    "description": "Markdown 作者行",
+    "placeholders": {
+      "value": {
+        "content": "$1",
+        "example": "Example Author (@example)"
+      }
+    }
+  },
+  "markdownTimeLine": {
+    "message": "时间: $1",
+    "description": "Markdown 时间行",
+    "placeholders": {
+      "value": {
+        "content": "$1",
+        "example": "2026-03-21 12:18:32"
+      }
+    }
+  },
+  "markdownLinkLine": {
+    "message": "链接: $1",
+    "description": "Markdown 链接行",
+    "placeholders": {
+      "value": {
+        "content": "$1",
+        "example": "https://x.com/example/status/1"
+      }
+    }
+  },
+  "markdownBodyLabel": {
+    "message": "正文:",
+    "description": "Markdown 正文标题"
+  },
+  "markdownQuoteSectionLabel": {
+    "message": "引用内容:",
+    "description": "Markdown 引用区标题"
+  },
+  "markdownQuotedImageSectionLabel": {
+    "message": "引用图片:",
+    "description": "Markdown 引用图片区标题"
+  },
+  "markdownImageSectionLabel": {
+    "message": "图片:",
+    "description": "Markdown 图片区标题"
+  },
+  "markdownImageLabel": {
+    "message": "图片 $1",
+    "description": "Markdown 图片标签",
+    "placeholders": {
+      "index": {
+        "content": "$1",
+        "example": "1"
+      }
+    }
+  },
+  "markdownQuotedImageLabel": {
+    "message": "引用图片 $1",
+    "description": "Markdown 引用图片标签",
+    "placeholders": {
+      "index": {
+        "content": "$1",
+        "example": "1"
+      }
+    }
+  },
+  "unknownAuthor": {
+    "message": "未知作者",
+    "description": "未知作者占位文案"
+  }
+}

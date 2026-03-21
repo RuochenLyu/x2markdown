@@ -60,7 +60,7 @@ async function ensureContextMenu() {
 
   chrome.contextMenus.create({
     id: MENU_ID,
-    title: "复制为 Markdown",
+    title: t("contextMenuCopyAsMarkdown", undefined, "Copy as Markdown"),
     contexts: ["all"],
     documentUrlPatterns: DOCUMENT_URL_PATTERNS,
     visible: false
@@ -148,4 +148,13 @@ function updateContextMenuVisibility(visible) {
       }
     );
   });
+}
+
+function t(messageName, substitutions, fallback = "") {
+  const message =
+    typeof chrome !== "undefined" && chrome.i18n && typeof chrome.i18n.getMessage === "function"
+      ? chrome.i18n.getMessage(messageName, substitutions)
+      : "";
+
+  return message || fallback || messageName;
 }

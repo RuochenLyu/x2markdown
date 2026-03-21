@@ -28,7 +28,8 @@
 - 长文中的插图会按正文顺序转换成 Markdown 链接。
 - 图片以链接形式输出，不转成 Markdown 图片嵌入。
 - 时间线中命中被截断的 post 时，会先尝试点击“显示更多”再复制。
-- 复制成功或失败时显示中文提示。
+- 运行时文案会跟随 Chrome UI 语言在简体中文和英文之间切换。
+- 复制成功或失败时显示与浏览器语言一致的提示。
 - 支持以下详情页格式：
   - `https://x.com/<user>/status/<id>`
   - `https://x.com/<user>/article/<id>`
@@ -84,6 +85,7 @@ X Article 输出示例见 [docs/examples/post.md](./docs/examples/post.md)。
 ## 实现思路
 
 - 使用原生 Manifest V3。
+- 使用 Chrome 扩展原生 `/_locales` 机制提供 `zh_CN` 和 `en` 两套运行时文案。
 - 使用 `background service worker` 创建 Chrome 右键菜单。
 - 用户点击右键菜单后，由 service worker 向当前页 content script 发送复制消息。
 - 内容脚本会在 `contextmenu` 事件中缓存最近一次命中的 post 卡片，并按命中结果动态更新菜单可见性。
@@ -132,6 +134,7 @@ x2markdown/
 - 某些长文会在 `status` 页面直接渲染为阅读视图，此时会按长文格式导出。
 - 信息流帖子依赖最近一次右键命中的可见卡片；如果右键时没有命中帖子，插件会明确提示失败。
 - “显示更多”依赖按钮点击后的页面异步渲染；如果 X 没有返回完整正文，插件仍会按当时可见内容提取。
+- 当前只内置简体中文和英文两套文案；其他浏览器语言会回退到默认中文文案。
 - 如果页面本身没有渲染出正文，插件会明确提示失败，而不是复制残缺内容。
 
 遇到问题时，先看 [docs/troubleshooting.md](./docs/troubleshooting.md)。

@@ -1,0 +1,152 @@
+{
+  "extName": {
+    "message": "X2Markdown",
+    "description": "Extension name"
+  },
+  "extDescription": {
+    "message": "Right-click supported x.com pages and posts to copy them as Markdown with title, author, time, body, and image links.",
+    "description": "Extension description"
+  },
+  "contextMenuCopyAsMarkdown": {
+    "message": "Copy as Markdown",
+    "description": "Context menu title"
+  },
+  "toastCopiedAsMarkdown": {
+    "message": "Copied as Markdown",
+    "description": "Copy success toast"
+  },
+  "errorCopyFailedGeneric": {
+    "message": "Copy failed",
+    "description": "Generic copy failure"
+  },
+  "errorPostNotFound": {
+    "message": "Current post not found",
+    "description": "The current post could not be located"
+  },
+  "errorUnsupportedPostPage": {
+    "message": "This is not a supported post page",
+    "description": "The current status page is unsupported"
+  },
+  "errorCurrentPostBodyNotFound": {
+    "message": "Current post body not found",
+    "description": "The main post body on the status page could not be found"
+  },
+  "errorUnsupportedArticlePage": {
+    "message": "This is not a supported article page",
+    "description": "The current article page is unsupported"
+  },
+  "errorArticleContainerNotFound": {
+    "message": "Article container not found",
+    "description": "The article container could not be found"
+  },
+  "errorArticleTitleNotFound": {
+    "message": "Article title not found",
+    "description": "The article title could not be found"
+  },
+  "errorUnsupportedPath": {
+    "message": "Page path is not supported",
+    "description": "The current path does not match any supported pattern"
+  },
+  "errorInvalidPostNode": {
+    "message": "Invalid post node",
+    "description": "The post node is invalid"
+  },
+  "errorAuthorInfoNotFound": {
+    "message": "Author information not found",
+    "description": "The author information could not be found"
+  },
+  "errorPublishTimeNotFound": {
+    "message": "Publish time not found",
+    "description": "The publish time could not be found"
+  },
+  "errorPostLinkNotFound": {
+    "message": "Post link not found",
+    "description": "The post link could not be found"
+  },
+  "errorBodyNotFound": {
+    "message": "Body content not found",
+    "description": "The post body could not be found"
+  },
+  "errorInvalidArticleNode": {
+    "message": "Invalid article node",
+    "description": "The article node is invalid"
+  },
+  "errorArticleBodyNotFound": {
+    "message": "Article body not found",
+    "description": "The article body could not be found"
+  },
+  "errorClipboardRetry": {
+    "message": "Copy failed, please try again manually",
+    "description": "Clipboard write failure"
+  },
+  "markdownAuthorLine": {
+    "message": "Author: $1",
+    "description": "Markdown author line",
+    "placeholders": {
+      "value": {
+        "content": "$1",
+        "example": "Example Author (@example)"
+      }
+    }
+  },
+  "markdownTimeLine": {
+    "message": "Time: $1",
+    "description": "Markdown time line",
+    "placeholders": {
+      "value": {
+        "content": "$1",
+        "example": "2026-03-21 12:18:32"
+      }
+    }
+  },
+  "markdownLinkLine": {
+    "message": "Link: $1",
+    "description": "Markdown link line",
+    "placeholders": {
+      "value": {
+        "content": "$1",
+        "example": "https://x.com/example/status/1"
+      }
+    }
+  },
+  "markdownBodyLabel": {
+    "message": "Body:",
+    "description": "Markdown body heading"
+  },
+  "markdownQuoteSectionLabel": {
+    "message": "Quoted Post:",
+    "description": "Markdown quoted section heading"
+  },
+  "markdownQuotedImageSectionLabel": {
+    "message": "Quoted Images:",
+    "description": "Markdown quoted images heading"
+  },
+  "markdownImageSectionLabel": {
+    "message": "Images:",
+    "description": "Markdown images heading"
+  },
+  "markdownImageLabel": {
+    "message": "Image $1",
+    "description": "Markdown image label",
+    "placeholders": {
+      "index": {
+        "content": "$1",
+        "example": "1"
+      }
+    }
+  },
+  "markdownQuotedImageLabel": {
+    "message": "Quoted Image $1",
+    "description": "Markdown quoted image label",
+    "placeholders": {
+      "index": {
+        "content": "$1",
+        "example": "1"
+      }
+    }
+  },
+  "unknownAuthor": {
+    "message": "Unknown author",
+    "description": "Fallback author label"
+  }
+}

@@ -10,6 +10,7 @@
 - 支持 `https://x.com/<user>/article/<id>`
 - 支持 `x.com` 各类时间线中可见的单条 post 卡片右键复制
 - 支持时间线中被截断正文的 post 在复制前自动展开“显示更多”
+- 支持运行时文案随 Chrome UI 语言在简体中文与英文之间切换
 - 支持正文中的普通链接
 - 支持正文附件图片链接
 - 支持普通 post 中的 quoted post 作为附录输出
@@ -34,6 +35,7 @@ flowchart LR
 ### 1. 右键菜单入口
 
 - `background.js` 在扩展安装和浏览器启动时创建唯一右键菜单项。
+- `manifest.json` 通过 `default_locale` 和 `/_locales/zh_CN`、`/_locales/en` 提供扩展名、描述和运行时文案。
 - 菜单挂载在 `https://x.com/*`，并由 content script 基于最近一次右键命中的位置动态控制可见性。
 - 详情页继续允许直接复制当前主内容；信息流场景只对命中的单条帖子卡片开放入口。
 - 用户点击右键菜单后，由 background 向当前 tab 发送复制消息。
