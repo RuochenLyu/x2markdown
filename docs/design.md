@@ -35,7 +35,7 @@ flowchart LR
 ### 1. 右键菜单入口
 
 - `background.js` 在扩展安装和浏览器启动时创建唯一右键菜单项。
-- `manifest.json` 通过 `default_locale` 和 `/_locales/zh_CN`、`/_locales/en` 提供扩展名、描述和运行时文案。
+- `manifest.json` 通过 `default_locale: en` 和 `/_locales/en`、`/_locales/zh_CN` 提供扩展名、描述和运行时文案；未匹配语言时回退到英文。
 - 菜单挂载在 `https://x.com/*`，并由 content script 基于最近一次右键命中的位置动态控制可见性。
 - 详情页继续允许直接复制当前主内容；信息流场景只对命中的单条帖子卡片开放入口。
 - 用户点击右键菜单后，由 background 向当前 tab 发送复制消息。

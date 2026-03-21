@@ -1,0 +1,54 @@
+<svg width="1280" height="800" viewBox="0 0 1280 800" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1280" height="800" fill="#F4EFE7"/>
+  <g transform="translate(40 40)">
+    <rect width="1200" height="720" rx="32" fill="#F4EFE7"/>
+    <rect x="40" y="44" width="532" height="632" rx="30" fill="#FFFDFC" stroke="#D9CFC2" stroke-width="2"/>
+    <rect x="40" y="44" width="532" height="72" rx="30" fill="#F8F3EC"/>
+    <rect x="40" y="86" width="532" height="30" fill="#F8F3EC"/>
+    <circle cx="78" cy="79" r="8" fill="#E6B8A2"/>
+    <circle cx="106" cy="79" r="8" fill="#D8DCC0"/>
+    <circle cx="134" cy="79" r="8" fill="#C9D8CF"/>
+    <rect x="172" y="63" width="306" height="32" rx="16" fill="#FFFFFF" stroke="#E4D9CC" stroke-width="2"/>
+    <text x="196" y="84" fill="#5B554F" font-family="Helvetica, Arial, sans-serif" font-size="15">https://x.com/example/article/1234567890</text>
+
+    <rect x="74" y="150" width="282" height="24" rx="8" fill="#2C2A28"/>
+    <rect x="74" y="188" width="126" height="16" rx="6" fill="#9D948B"/>
+    <rect x="74" y="228" width="438" height="16" rx="8" fill="#E7DED4"/>
+    <rect x="74" y="256" width="404" height="16" rx="8" fill="#E7DED4"/>
+    <rect x="74" y="284" width="426" height="16" rx="8" fill="#E7DED4"/>
+    <rect x="74" y="334" width="438" height="168" rx="24" fill="#D8A086"/>
+    <rect x="74" y="528" width="396" height="14" rx="7" fill="#E7DED4"/>
+    <rect x="74" y="554" width="430" height="14" rx="7" fill="#E7DED4"/>
+    <rect x="74" y="580" width="376" height="14" rx="7" fill="#E7DED4"/>
+
+    <rect x="226" y="354" width="264" height="248" rx="22" fill="#FFFFFF"/>
+    <rect x="226" y="354" width="264" height="248" rx="22" stroke="#D9CFC2" stroke-width="2"/>
+    <rect x="244" y="372" width="228" height="36" rx="12" fill="#FFF7F2"/>
+    <text x="282" y="395" fill="#4F7A4C" font-family="Helvetica, Arial, sans-serif" font-size="15" font-weight="700">Context Menu</text>
+    <rect x="244" y="424" width="228" height="34" rx="10" fill="#FFFFFF"/>
+    <text x="286" y="446" fill="#3A342E" font-family="Helvetica, Arial, sans-serif" font-size="16">Back</text>
+    <rect x="244" y="464" width="228" height="34" rx="10" fill="#FFFFFF"/>
+    <text x="286" y="486" fill="#3A342E" font-family="Helvetica, Arial, sans-serif" font-size="16">Reload</text>
+    <rect x="258" y="514" width="200" height="1" fill="#E7DED4"/>
+    <rect x="244" y="528" width="228" height="44" rx="12" fill="#F6E3D8"/>
+    <rect x="258" y="541" width="18" height="18" rx="4" fill="#CF815D"/>
+    <path d="M263 550H271M271 550L267 554M271 550L267 546" stroke="#FFFFFF" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+    <text x="284" y="556" fill="#4F7A4C" font-family="Helvetica, Arial, sans-serif" font-size="17" font-weight="700">Copy as Markdown</text>
+    <path d="M572 360C632 360 638 360 672 360" stroke="#4F7A4C" stroke-width="8" stroke-linecap="round"/>
+    <path d="M654 338L682 360L654 382" stroke="#4F7A4C" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+
+    <rect x="700" y="44" width="460" height="632" rx="30" fill="#15211B"/>
+    <rect x="730" y="78" width="164" height="28" rx="10" fill="#24352C"/>
+    <text x="742" y="97" fill="#E7F0EA" font-family="Helvetica, Arial, sans-serif" font-size="15" font-weight="700">Markdown Output</text>
+    <text x="730" y="146" fill="#F5F7F6" font-family="SFMono-Regular, Consolas, monospace" font-size="24" font-weight="700"># X2Markdown Output</text>
+    <text x="730" y="196" fill="#D6E1DA" font-family="SFMono-Regular, Consolas, monospace" font-size="18">Author: Example Author (@example)</text>
+    <text x="730" y="232" fill="#D6E1DA" font-family="SFMono-Regular, Consolas, monospace" font-size="18">Time: 2026-03-18 16:30:00</text>
+    <text x="730" y="268" fill="#D6E1DA" font-family="SFMono-Regular, Consolas, monospace" font-size="18">Link: https://x.com/example/article/...</text>
+    <text x="730" y="326" fill="#F5F7F6" font-family="SFMono-Regular, Consolas, monospace" font-size="18">Body:</text>
+    <text x="730" y="366" fill="#D6E1DA" font-family="SFMono-Regular, Consolas, monospace" font-size="18">Collect title, author, time, and body</text>
+    <text x="730" y="400" fill="#D6E1DA" font-family="SFMono-Regular, Consolas, monospace" font-size="18">plus image links as AI-ready Markdown.</text>
+    <text x="730" y="458" fill="#D6E1DA" font-family="SFMono-Regular, Consolas, monospace" font-size="18">[Image 1](https://pbs.twimg.com/media/...)</text>
+    <rect x="730" y="504" width="356" height="1" fill="#304238"/>
+    <text x="730" y="548" fill="#8CCB9A" font-family="SFMono-Regular, Consolas, monospace" font-size="18">&gt; Quoted content is appended below</text>
+  </g>
+</svg>
