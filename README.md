@@ -1,6 +1,6 @@
 # x2markdown
 
-`x2markdown` 是一个面向 `x.com` 的 Chrome 浏览器插件。它会在受支持页面的浏览器右键菜单中增加一个“复制为 Markdown”入口，用来把当前内容快速整理成适合粘贴到 AI 对话中的 Markdown 文本。
+`x2markdown` 是一个面向 `x.com` 的 Chrome 浏览器插件。它会在受支持页面和帖子卡片的浏览器右键菜单中增加一个“复制为 Markdown”入口，用来把当前内容快速整理成适合粘贴到 AI 对话中的 Markdown 文本。
 
 这个项目以展示和自用为主，使用 MIT 协议开源，默认不接收外部代码贡献。
 
@@ -16,7 +16,7 @@
 
 ## 功能范围
 
-- 在受支持页面的浏览器右键菜单中增加“复制为 Markdown”。
+- 在受支持页面和帖子卡片的浏览器右键菜单中增加“复制为 Markdown”。
 - 复制普通 post 时输出：
   - 作者
   - 时间
@@ -27,10 +27,12 @@
 - 复制 X Article 或长文阅读视图时额外输出标题。
 - 长文中的插图会按正文顺序转换成 Markdown 链接。
 - 图片以链接形式输出，不转成 Markdown 图片嵌入。
+- 时间线中命中被截断的 post 时，会先尝试点击“显示更多”再复制。
 - 复制成功或失败时显示中文提示。
-- 仅支持以下两种页面格式：
+- 支持以下详情页格式：
   - `https://x.com/<user>/status/<id>`
   - `https://x.com/<user>/article/<id>`
+- 支持 `x.com` 信息流、列表和搜索结果中可见的单条 post 卡片右键导出。
 
 ## 非目标
 
@@ -49,8 +51,8 @@
 
 ## 使用方式
 
-1. 打开受支持的 `status` 或 `article` 页面。
-2. 在页面空白区域点击右键。
+1. 打开 `x.com` 上要复制的帖子详情页、长文页，或包含目标 post 的时间线页面。
+2. 在当前帖子区域内点击右键；如果是详情页，也可以直接在当前页面主内容区域点击右键。
 3. 选择“复制为 Markdown”。
 4. 直接把结果粘贴到 AI 对话框、Markdown 编辑器或笔记工具中。
 
@@ -84,8 +86,10 @@ X Article 输出示例见 [docs/examples/post.md](./docs/examples/post.md)。
 - 使用原生 Manifest V3。
 - 使用 `background service worker` 创建 Chrome 右键菜单。
 - 用户点击右键菜单后，由 service worker 向当前页 content script 发送复制消息。
+- 内容脚本会在 `contextmenu` 事件中缓存最近一次命中的 post 卡片，并按命中结果动态更新菜单可见性。
+- 命中时间线里被截断的 post 时，内容脚本会先在当前 `article[data-testid="tweet"]` 内尝试点击 `tweet-text-show-more-link`，等待正文展开后再提取。
 - 提取逻辑优先依赖可见 DOM 与语义节点：
-  - `article`
+  - `article[data-testid="tweet"]`
   - `time[datetime]`
   - `data-testid="User-Name"`
   - `data-testid="tweetText"`
@@ -123,10 +127,11 @@ x2markdown/
 ## 已知限制
 
 - X 的 DOM 结构经常调整，正文提取逻辑可能失效。
-- 当前版本只保证“当前帖子 / 当前文章”的导出，不做 thread 合并。
+- 当前版本只保证“当前帖子 / 当前文章 / 右键命中的单条帖子卡片”的导出，不做 thread 合并。
 - 普通 post 没有原生标题，因此不会输出标题字段。
 - 某些长文会在 `status` 页面直接渲染为阅读视图，此时会按长文格式导出。
-- 当前版本只支持 `status` 和 `article` 两种 URL 格式。
+- 信息流帖子依赖最近一次右键命中的可见卡片；如果右键时没有命中帖子，插件会明确提示失败。
+- “显示更多”依赖按钮点击后的页面异步渲染；如果 X 没有返回完整正文，插件仍会按当时可见内容提取。
 - 如果页面本身没有渲染出正文，插件会明确提示失败，而不是复制残缺内容。
 
 遇到问题时，先看 [docs/troubleshooting.md](./docs/troubleshooting.md)。

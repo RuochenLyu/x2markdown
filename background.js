@@ -1,7 +1,8 @@
 const MENU_ID = "copy_as_markdown";
-const MESSAGE_TYPE = "COPY_MARKDOWN_FROM_PAGE";
-const DOCUMENT_URL_PATTERNS = ["https://x.com/*/status/*", "https://x.com/*/article/*"];
-const PAGE_URL_PATTERN = /^https:\/\/x\.com\/[^/]+\/(?:status|article)\/\d+(?:[/?#]|$)/;
+const COPY_MESSAGE_TYPE = "COPY_MARKDOWN_FROM_PAGE";
+const MENU_VISIBILITY_MESSAGE_TYPE = "SET_CONTEXT_MENU_VISIBILITY";
+const DOCUMENT_URL_PATTERNS = ["https://x.com/*"];
+const PAGE_URL_PATTERN = /^https:\/\/x\.com\/(?:$|[?#]|.+)/;
 
 chrome.runtime.onInstalled.addListener(() => {
   void ensureContextMenu();
@@ -23,6 +24,26 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
   void handleCopyRequest(tab.id);
 });
 
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+  if (!message || message.type !== MENU_VISIBILITY_MESSAGE_TYPE) {
+    return undefined;
+  }
+
+  void handleMenuVisibilityUpdate(Boolean(message.visible), sender)
+    .then(() => {
+      sendResponse({ ok: true });
+    })
+    .catch((error) => {
+      console.error("[x2markdown] 更新菜单可见性失败", error);
+      sendResponse({
+        ok: false,
+        error: error instanceof Error ? error.message : "更新菜单失败"
+      });
+    });
+
+  return true;
+});
+
 async function handleCopyRequest(tabId) {
   try {
     const response = await sendCopyMessageWithFallback(tabId);
@@ -40,15 +61,24 @@ async function ensureContextMenu() {
   chrome.contextMenus.create({
     id: MENU_ID,
     title: "复制为 Markdown",
-    contexts: ["page"],
-    documentUrlPatterns: DOCUMENT_URL_PATTERNS
+    contexts: ["all"],
+    documentUrlPatterns: DOCUMENT_URL_PATTERNS,
+    visible: false
   });
+}
+
+async function handleMenuVisibilityUpdate(visible, sender) {
+  if (!sender.tab || typeof sender.tab.id !== "number") {
+    return;
+  }
+
+  await updateContextMenuVisibility(visible);
 }
 
 async function sendCopyMessageWithFallback(tabId) {
   try {
     return await chrome.tabs.sendMessage(tabId, {
-      type: MESSAGE_TYPE
+      type: COPY_MESSAGE_TYPE
     });
   } catch (error) {
     if (!shouldInjectContentScript(error)) {
@@ -58,7 +88,7 @@ async function sendCopyMessageWithFallback(tabId) {
     await ensureContentScript(tabId);
 
     return chrome.tabs.sendMessage(tabId, {
-      type: MESSAGE_TYPE
+      type: COPY_MESSAGE_TYPE
     });
   }
 }
@@ -98,5 +128,24 @@ function removeAllContextMenus() {
 
       resolve();
     });
+  });
+}
+
+function updateContextMenuVisibility(visible) {
+  return new Promise((resolve, reject) => {
+    chrome.contextMenus.update(
+      MENU_ID,
+      {
+        visible
+      },
+      () => {
+        if (chrome.runtime.lastError) {
+          reject(new Error(chrome.runtime.lastError.message));
+          return;
+        }
+
+        resolve();
+      }
+    );
   });
 }

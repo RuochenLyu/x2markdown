@@ -8,18 +8,24 @@
   window.__x2markdownInjected = true;
 
   const STATE = {
-    toastTimer: null
+    toastTimer: null,
+    contextMenuTargetNode: null,
+    contextMenuPost: null,
+    contextMenuStatusUrl: "",
+    menuVisible: null
   };
 
-  const MESSAGE_TYPE = "COPY_MARKDOWN_FROM_PAGE";
+  const COPY_MESSAGE_TYPE = "COPY_MARKDOWN_FROM_PAGE";
+  const MENU_VISIBILITY_MESSAGE_TYPE = "SET_CONTEXT_MENU_VISIBILITY";
   const PATH_PATTERNS = {
     status: /^\/[^/]+\/status\/\d+(?:\/)?$/,
     article: /^\/[^/]+\/article\/\d+(?:\/)?$/
   };
 
   const SELECTORS = {
-    article: "article",
+    article: 'article[data-testid="tweet"]',
     tweetText: '[data-testid="tweetText"]',
+    tweetTextShowMore: '[data-testid="tweet-text-show-more-link"]',
     userName: '[data-testid="User-Name"]',
     longformRoot: '[data-testid="twitterArticleReadView"]',
     longformTitle: '[data-testid="twitter-article-title"]',
@@ -43,9 +49,11 @@
     '[data-testid="markdown-code-block"]'
   ].join(", ");
 
+  document.addEventListener("contextmenu", handleContextMenuEvent, true);
+
   if (typeof chrome !== "undefined" && chrome.runtime && chrome.runtime.onMessage) {
     chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
-      if (!message || message.type !== MESSAGE_TYPE) {
+      if (!message || message.type !== COPY_MESSAGE_TYPE) {
         return undefined;
       }
 
@@ -69,11 +77,12 @@
 
   async function handleCopyRequest() {
     const pageType = getSupportedPageType(location.pathname);
-    if (!pageType) {
-      throw new Error("当前页面不受支持");
-    }
-
-    const payload = pageType === "status" ? extractCurrentStatusPage() : extractCurrentArticlePage();
+    const payload =
+      pageType === "status"
+        ? await extractCurrentStatusPage()
+        : pageType === "article"
+          ? await extractCurrentArticlePage()
+          : await extractContextMenuPostPage();
     const markdown = buildMarkdown(payload);
 
     await copyToClipboard(markdown);
@@ -92,7 +101,7 @@
     return null;
   }
 
-  function extractCurrentStatusPage() {
+  async function extractCurrentStatusPage() {
     const longformRoot = getLongformRoot();
     if (longformRoot) {
       const payload = extractArticleData(longformRoot);
@@ -102,7 +111,9 @@
       };
     }
 
-    const article = getStatusPageArticle();
+    const article = await expandTweetTextIfNeeded(getStatusPageArticle(), {
+      resolveArticle: getStatusPageArticle
+    });
     const payload = extractPostData(article);
 
     return {
@@ -111,7 +122,7 @@
     };
   }
 
-  function extractCurrentArticlePage() {
+  async function extractCurrentArticlePage() {
     const root = getArticlePageRoot();
     const payload = extractArticleData(root);
 
@@ -119,6 +130,176 @@
       ...payload,
       url: cleanPageUrl(location.href)
     };
+  }
+
+  function handleContextMenuEvent(event) {
+    const pageType = getSupportedPageType(location.pathname);
+    if (pageType) {
+      clearContextMenuTarget();
+      void syncContextMenuVisibility(true);
+      return;
+    }
+
+    const article = findContextMenuArticle(event.target);
+    if (!(article instanceof HTMLElement) || !isVisible(article)) {
+      clearContextMenuTarget();
+      void syncContextMenuVisibility(false);
+      return;
+    }
+
+    const statusUrl = extractPrimaryStatusUrl(article);
+    if (!statusUrl) {
+      clearContextMenuTarget();
+      void syncContextMenuVisibility(false);
+      return;
+    }
+
+    STATE.contextMenuTargetNode = event.target instanceof Node ? event.target : null;
+    STATE.contextMenuPost = article;
+    STATE.contextMenuStatusUrl = statusUrl;
+
+    void syncContextMenuVisibility(true);
+  }
+
+  async function extractContextMenuPostPage() {
+    const article = await expandTweetTextIfNeeded(resolveContextMenuPostArticle(), {
+      resolveArticle: resolveContextMenuPostArticle
+    });
+    return extractPostData(article);
+  }
+
+  async function expandTweetTextIfNeeded(article, options = {}) {
+    const { resolveArticle = () => article } = options;
+    let currentArticle = safelyResolveArticle(resolveArticle) || article;
+
+    if (!(currentArticle instanceof HTMLElement)) {
+      throw new Error("未找到当前帖子");
+    }
+
+    for (let index = 0; index < 4; index += 1) {
+      const showMoreButton = findTweetTextShowMoreButton(currentArticle);
+      if (!(showMoreButton instanceof HTMLButtonElement)) {
+        return currentArticle;
+      }
+
+      const previousSnapshot = getTweetTextSnapshot(currentArticle);
+      showMoreButton.click();
+      await waitForTweetTextExpansion(resolveArticle, previousSnapshot);
+
+      currentArticle = safelyResolveArticle(resolveArticle) || currentArticle;
+      if (!(currentArticle instanceof HTMLElement)) {
+        throw new Error("未找到当前帖子");
+      }
+    }
+
+    return currentArticle;
+  }
+
+  async function waitForTweetTextExpansion(resolveArticle, previousSnapshot) {
+    const startedAt = Date.now();
+
+    while (Date.now() - startedAt < 1800) {
+      await wait(60);
+
+      const article = safelyResolveArticle(resolveArticle);
+      if (!(article instanceof HTMLElement)) {
+        continue;
+      }
+
+      const currentSnapshot = getTweetTextSnapshot(article);
+      const hasShowMoreButton = Boolean(findTweetTextShowMoreButton(article));
+      if (currentSnapshot !== previousSnapshot || !hasShowMoreButton) {
+        await wait(120);
+        return;
+      }
+    }
+  }
+
+  function findTweetTextShowMoreButton(article) {
+    const candidates = getScopedVisibleElements(article, SELECTORS.tweetTextShowMore, article).filter((node) => {
+      return node instanceof HTMLButtonElement && !node.disabled;
+    });
+
+    return candidates[0] || null;
+  }
+
+  function getTweetTextSnapshot(article) {
+    return getScopedVisibleElements(article, SELECTORS.tweetText, article)
+      .map((node) => normalizeMarkdownBlock(extractInlineMarkdown(node)))
+      .filter(Boolean)
+      .join("\n\n");
+  }
+
+  function safelyResolveArticle(resolveArticle) {
+    try {
+      const article = resolveArticle();
+      return article instanceof HTMLElement ? article : null;
+    } catch (error) {
+      return null;
+    }
+  }
+
+  function resolveContextMenuPostArticle() {
+    if (isReusableContextMenuArticle(STATE.contextMenuPost)) {
+      return STATE.contextMenuPost;
+    }
+
+    const fallbackArticle = findArticleByStatusUrl(STATE.contextMenuStatusUrl);
+    if (fallbackArticle) {
+      STATE.contextMenuPost = fallbackArticle;
+      return fallbackArticle;
+    }
+
+    clearContextMenuTarget();
+    throw new Error("未找到当前帖子");
+  }
+
+  function clearContextMenuTarget() {
+    STATE.contextMenuTargetNode = null;
+    STATE.contextMenuPost = null;
+    STATE.contextMenuStatusUrl = "";
+  }
+
+  function isReusableContextMenuArticle(article) {
+    return article instanceof HTMLElement && article.isConnected && article.matches(SELECTORS.article) && isVisible(article);
+  }
+
+  function findContextMenuArticle(target) {
+    const element =
+      target instanceof Element ? target : target instanceof Node ? target.parentElement : null;
+
+    if (!(element instanceof Element)) {
+      return null;
+    }
+
+    const article = element.closest(SELECTORS.article);
+    return article instanceof HTMLElement ? article : null;
+  }
+
+  function findArticleByStatusUrl(statusUrl) {
+    const cleanStatusUrl = cleanPageUrl(statusUrl);
+    if (!cleanStatusUrl) {
+      return null;
+    }
+
+    const candidates = Array.from(document.querySelectorAll(SELECTORS.article)).filter((article) => {
+      return article instanceof HTMLElement && isVisible(article) && articleHasStatusUrl(article, cleanStatusUrl);
+    });
+
+    return candidates[0] || null;
+  }
+
+  function articleHasStatusUrl(article, statusUrl) {
+    return Array.from(article.querySelectorAll("a[href]"))
+      .map((link) => toAbsoluteUrl(link.getAttribute("href")))
+      .map(cleanPageUrl)
+      .some((href) => href === statusUrl);
+  }
+
+  function extractPrimaryStatusUrl(article) {
+    const statusId = extractStatusIdFromArticle(article);
+    const timeInfo = extractStatusTime(article, statusId);
+    return extractStatusUrl(article, timeInfo.element);
   }
 
   function getStatusPageArticle() {
@@ -146,6 +327,30 @@
     return Array.from(article.querySelectorAll("a[href]"))
       .map((link) => toAbsoluteUrl(link.getAttribute("href")))
       .some((href) => statusPattern.test(href));
+  }
+
+  function extractStatusIdFromArticle(article) {
+    const timeElements = Array.from(article.querySelectorAll("time[datetime]")).filter((element) => {
+      if (!(element instanceof HTMLElement) || !isVisible(element)) {
+        return false;
+      }
+
+      return element.closest(SELECTORS.article) === article;
+    });
+
+    const linkedTime = timeElements.find((element) => element.closest("a[href]") instanceof HTMLAnchorElement) || null;
+    const linkedStatusId =
+      linkedTime instanceof HTMLElement ? extractStatusIdFromUrl(linkedTime.closest("a[href]")?.getAttribute("href") || "") : "";
+
+    if (linkedStatusId) {
+      return linkedStatusId;
+    }
+
+    const statusLinks = Array.from(article.querySelectorAll("a[href]"))
+      .map((link) => extractStatusIdFromUrl(link.getAttribute("href") || ""))
+      .filter(Boolean);
+
+    return statusLinks[0] || "";
   }
 
   function getArticlePageRoot() {
@@ -191,7 +396,8 @@
       throw new Error("帖子节点无效");
     }
 
-    const statusId = getSupportedPageType(location.pathname) === "status" ? extractPathId(location.pathname, "status") : "";
+    const statusId =
+      getSupportedPageType(location.pathname) === "status" ? extractPathId(location.pathname, "status") : extractStatusIdFromArticle(article);
     const author = extractAuthor(article);
     const timeInfo = extractStatusTime(article, statusId);
     const timeElement = timeInfo.element;
@@ -929,6 +1135,23 @@
     return lines.join("\n").trim();
   }
 
+  async function syncContextMenuVisibility(visible) {
+    STATE.menuVisible = visible;
+
+    if (typeof chrome === "undefined" || !chrome.runtime || typeof chrome.runtime.sendMessage !== "function") {
+      return;
+    }
+
+    try {
+      await chrome.runtime.sendMessage({
+        type: MENU_VISIBILITY_MESSAGE_TYPE,
+        visible
+      });
+    } catch (error) {
+      // Ignore transient service worker timing errors and keep local state authoritative.
+    }
+  }
+
   function formatAuthor(author) {
     if (author.displayName && author.handle) {
       return `${author.displayName} (${author.handle})`;
@@ -1155,6 +1378,18 @@
     } catch (error) {
       return value;
     }
+  }
+
+  function extractStatusIdFromUrl(value) {
+    const cleanUrl = toAbsoluteUrl(value);
+    const match = cleanUrl.match(/^https:\/\/x\.com\/[^/]+\/status\/(\d+)(?:[/?#]|$)/);
+    return match ? match[1] : "";
+  }
+
+  function wait(milliseconds) {
+    return new Promise((resolve) => {
+      window.setTimeout(resolve, milliseconds);
+    });
   }
 
   function escapeMarkdownText(value) {

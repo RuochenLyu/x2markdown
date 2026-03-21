@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "X2Markdown",
   "description": "在受支持的 x.com 页面右键复制为 Markdown，一键整理标题、作者、时间、正文和图片链接。",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "permissions": [
     "activeTab",
     "clipboardWrite",
