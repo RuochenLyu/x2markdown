@@ -4,16 +4,24 @@
     "description": "Extension name"
   },
   "extDescription": {
-    "message": "Right-click supported x.com pages and posts to copy them as Markdown with title, author, time, body, and image links.",
+    "message": "Right-click the current page article or selection to copy it as Markdown, with extra support for x.com posts and longform pages.",
     "description": "Extension description"
   },
-  "contextMenuCopyAsMarkdown": {
-    "message": "Copy as Markdown",
-    "description": "Context menu title"
+  "contextMenuCopyBodyAsMarkdown": {
+    "message": "Copy Body as Markdown",
+    "description": "Body context menu title"
   },
-  "toastCopiedAsMarkdown": {
-    "message": "Copied as Markdown",
-    "description": "Copy success toast"
+  "contextMenuCopySelectionAsMarkdown": {
+    "message": "Copy Selection as Markdown",
+    "description": "Selection context menu title"
+  },
+  "toastCopiedSelectionAsMarkdown": {
+    "message": "Copied selection as Markdown",
+    "description": "Selection copy success toast"
+  },
+  "toastCopiedBodyAsMarkdown": {
+    "message": "Copied body as Markdown",
+    "description": "Body copy success toast"
   },
   "errorCopyFailedGeneric": {
     "message": "Copy failed",
@@ -79,6 +87,30 @@
     "message": "Copy failed, please try again manually",
     "description": "Clipboard write failure"
   },
+  "errorRightClickPostFirst": {
+    "message": "Right-click inside the target post card and try again",
+    "description": "The current X timeline click did not hit a post card"
+  },
+  "errorEditableSelectionNotSupported": {
+    "message": "The current selection is inside an editable field. Please select page content instead.",
+    "description": "Selections inside editable inputs are not supported"
+  },
+  "errorNoValidSelection": {
+    "message": "No valid selection found",
+    "description": "No usable selection was found in selection mode"
+  },
+  "errorPageNotReadable": {
+    "message": "This page does not look like a readable article. Select the content and try again.",
+    "description": "The current page does not look like a readable article"
+  },
+  "errorPageInjectionBlocked": {
+    "message": "This page does not allow script injection. Try again on a normal web page.",
+    "description": "The current page does not support on-demand script injection"
+  },
+  "errorReadabilityUnavailable": {
+    "message": "The article extractor did not load. Refresh the page and try again.",
+    "description": "Readability failed to load"
+  },
   "markdownAuthorLine": {
     "message": "Author: $1",
     "description": "Markdown author line",
@@ -106,6 +138,16 @@
       "value": {
         "content": "$1",
         "example": "https://x.com/example/status/1"
+      }
+    }
+  },
+  "markdownSiteLine": {
+    "message": "Site: $1",
+    "description": "Markdown site line",
+    "placeholders": {
+      "value": {
+        "content": "$1",
+        "example": "developer.chrome.com"
       }
     }
   },

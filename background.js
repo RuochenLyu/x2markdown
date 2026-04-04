@@ -1,8 +1,13 @@
-const MENU_ID = "copy_as_markdown";
+const PAGE_MENU_ID = "copy_as_markdown";
+const SELECTION_MENU_ID = "copy_selection_as_markdown";
 const COPY_MESSAGE_TYPE = "COPY_MARKDOWN_FROM_PAGE";
-const MENU_VISIBILITY_MESSAGE_TYPE = "SET_CONTEXT_MENU_VISIBILITY";
-const DOCUMENT_URL_PATTERNS = ["https://x.com/*"];
-const PAGE_URL_PATTERN = /^https:\/\/x\.com\/(?:$|[?#]|.+)/;
+const DOCUMENT_URL_PATTERNS = ["http://*/*", "https://*/*"];
+const HTTP_PAGE_URL_PATTERN = /^https?:\/\//i;
+const X_PAGE_URL_PATTERN = /^https:\/\/x\.com\/(?:$|[?#]|.+)/i;
+const CHROME_WEB_STORE_URL_PATTERN = /^https:\/\/(chromewebstore\.google\.com|chrome\.google\.com\/webstore)\//i;
+const PDF_URL_PATTERN = /\.pdf(?:[?#]|$)/i;
+const ERROR_BADGE_TEXT = "!";
+const ERROR_TIMEOUTS = new Map();
 
 chrome.runtime.onInstalled.addListener(() => {
   void ensureContextMenu();
@@ -12,8 +17,12 @@ chrome.runtime.onStartup.addListener(() => {
   void ensureContextMenu();
 });
 
+chrome.tabs.onRemoved.addListener((tabId) => {
+  clearTimeoutForTab(tabId);
+});
+
 chrome.contextMenus.onClicked.addListener((info, tab) => {
-  if (info.menuItemId !== MENU_ID) {
+  if (info.menuItemId !== PAGE_MENU_ID && info.menuItemId !== SELECTION_MENU_ID) {
     return;
   }
 
@@ -21,37 +30,36 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
     return;
   }
 
-  void handleCopyRequest(tab.id);
+  const mode = info.menuItemId === SELECTION_MENU_ID ? "selection" : "main";
+  void handleCopyRequest(tab.id, tab.url, mode);
 });
 
-chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-  if (!message || message.type !== MENU_VISIBILITY_MESSAGE_TYPE) {
-    return undefined;
-  }
+async function handleCopyRequest(tabId, url, mode) {
+  await clearActionError(tabId);
 
-  void handleMenuVisibilityUpdate(Boolean(message.visible), sender)
-    .then(() => {
-      sendResponse({ ok: true });
-    })
-    .catch((error) => {
-      console.error("[x2markdown] 更新菜单可见性失败", error);
-      sendResponse({
-        ok: false,
-        error: error instanceof Error ? error.message : "更新菜单失败"
-      });
-    });
-
-  return true;
-});
-
-async function handleCopyRequest(tabId) {
   try {
-    const response = await sendCopyMessageWithFallback(tabId);
-    if (!response || response.ok !== true) {
-      console.error("[x2markdown] 页面复制失败", response && response.error ? response.error : "未知错误");
+    if (isKnownBlockedPageUrl(url)) {
+      await showActionError(tabId, t("errorPageInjectionBlocked", undefined, "This page does not allow script injection"));
+      return;
     }
+
+    if (isXPageUrl(url)) {
+      const response = await sendCopyMessageToXPage(tabId, mode);
+      if (!response || response.ok !== true) {
+        console.error("[x2markdown] X 页面复制失败", response && response.error ? response.error : "未知错误");
+      }
+      return;
+    }
+
+    await chrome.scripting.executeScript({
+      target: { tabId },
+      func: (m) => { window.__x2markdownCopyMode = m; },
+      args: [mode]
+    });
+    await injectFiles(tabId, ["shared.js", "readability.js", "content-generic.js"]);
   } catch (error) {
     console.error("[x2markdown] 无法触发页面复制", error);
+    await showActionError(tabId, t("errorPageInjectionBlocked", undefined, "This page does not allow script injection"));
   }
 }
 
@@ -59,41 +67,41 @@ async function ensureContextMenu() {
   await removeAllContextMenus();
 
   chrome.contextMenus.create({
-    id: MENU_ID,
-    title: t("contextMenuCopyAsMarkdown", undefined, "Copy as Markdown"),
-    contexts: ["all"],
-    documentUrlPatterns: DOCUMENT_URL_PATTERNS,
-    visible: false
+    id: PAGE_MENU_ID,
+    title: t("contextMenuCopyBodyAsMarkdown", undefined, "Copy Body as Markdown"),
+    contexts: ["page", "frame", "link", "image", "audio", "video"],
+    documentUrlPatterns: DOCUMENT_URL_PATTERNS
+  });
+
+  chrome.contextMenus.create({
+    id: SELECTION_MENU_ID,
+    title: t("contextMenuCopySelectionAsMarkdown", undefined, "Copy Selection as Markdown"),
+    contexts: ["selection"],
+    documentUrlPatterns: DOCUMENT_URL_PATTERNS
   });
 }
 
-async function handleMenuVisibilityUpdate(visible, sender) {
-  if (!sender.tab || typeof sender.tab.id !== "number") {
-    return;
-  }
-
-  await updateContextMenuVisibility(visible);
-}
-
-async function sendCopyMessageWithFallback(tabId) {
+async function sendCopyMessageToXPage(tabId, mode) {
   try {
     return await chrome.tabs.sendMessage(tabId, {
-      type: COPY_MESSAGE_TYPE
+      type: COPY_MESSAGE_TYPE,
+      mode
     });
   } catch (error) {
     if (!shouldInjectContentScript(error)) {
       throw error;
     }
 
-    await ensureContentScript(tabId);
+    await injectFiles(tabId, ["shared.js", "content-x.js"]);
 
     return chrome.tabs.sendMessage(tabId, {
-      type: COPY_MESSAGE_TYPE
+      type: COPY_MESSAGE_TYPE,
+      mode
     });
   }
 }
 
-async function ensureContentScript(tabId) {
+async function injectFiles(tabId, scriptFiles) {
   try {
     await chrome.scripting.insertCSS({
       target: { tabId },
@@ -105,7 +113,7 @@ async function ensureContentScript(tabId) {
 
   await chrome.scripting.executeScript({
     target: { tabId },
-    files: ["content.js"]
+    files: scriptFiles
   });
 }
 
@@ -115,7 +123,73 @@ function shouldInjectContentScript(error) {
 }
 
 function isSupportedPageUrl(url) {
-  return PAGE_URL_PATTERN.test(url);
+  return HTTP_PAGE_URL_PATTERN.test(url);
+}
+
+function isXPageUrl(url) {
+  return X_PAGE_URL_PATTERN.test(url);
+}
+
+function isKnownBlockedPageUrl(url) {
+  return CHROME_WEB_STORE_URL_PATTERN.test(url) || PDF_URL_PATTERN.test(url);
+}
+
+async function showActionError(tabId, message) {
+  if (!chrome.action || typeof chrome.action.setBadgeText !== "function") {
+    return;
+  }
+
+  try {
+    await chrome.action.setBadgeBackgroundColor({
+      color: "#b42318",
+      tabId
+    });
+    await chrome.action.setBadgeText({
+      text: ERROR_BADGE_TEXT,
+      tabId
+    });
+    await chrome.action.setTitle({
+      title: `${t("extName", undefined, "X2Markdown")}\n${message}`,
+      tabId
+    });
+
+    clearTimeoutForTab(tabId);
+    const timeoutId = setTimeout(() => {
+      void clearActionError(tabId);
+    }, 4000);
+    ERROR_TIMEOUTS.set(tabId, timeoutId);
+  } catch (error) {
+    console.error("[x2markdown] 无法显示错误徽标", error);
+  }
+}
+
+async function clearActionError(tabId) {
+  if (!chrome.action || typeof chrome.action.setBadgeText !== "function") {
+    return;
+  }
+
+  clearTimeoutForTab(tabId);
+
+  try {
+    await chrome.action.setBadgeText({
+      text: "",
+      tabId
+    });
+    await chrome.action.setTitle({
+      title: t("extName", undefined, "X2Markdown"),
+      tabId
+    });
+  } catch (error) {
+    console.error("[x2markdown] 无法清理错误徽标", error);
+  }
+}
+
+function clearTimeoutForTab(tabId) {
+  const timeoutId = ERROR_TIMEOUTS.get(tabId);
+  if (timeoutId) {
+    clearTimeout(timeoutId);
+    ERROR_TIMEOUTS.delete(tabId);
+  }
 }
 
 function removeAllContextMenus() {
@@ -128,25 +202,6 @@ function removeAllContextMenus() {
 
       resolve();
     });
-  });
-}
-
-function updateContextMenuVisibility(visible) {
-  return new Promise((resolve, reject) => {
-    chrome.contextMenus.update(
-      MENU_ID,
-      {
-        visible
-      },
-      () => {
-        if (chrome.runtime.lastError) {
-          reject(new Error(chrome.runtime.lastError.message));
-          return;
-        }
-
-        resolve();
-      }
-    );
   });
 }
 

@@ -4,16 +4,24 @@
     "description": "扩展名称"
   },
   "extDescription": {
-    "message": "在受支持的 x.com 页面右键复制为 Markdown，一键整理标题、作者、时间、正文和图片链接。",
+    "message": "右键把当前网页文章或选区复制为 Markdown，x.com 额外支持帖子和长文导出。",
     "description": "扩展描述"
   },
-  "contextMenuCopyAsMarkdown": {
-    "message": "复制为 Markdown",
-    "description": "右键菜单标题"
+  "contextMenuCopyBodyAsMarkdown": {
+    "message": "复制正文为 Markdown",
+    "description": "正文右键菜单标题"
   },
-  "toastCopiedAsMarkdown": {
-    "message": "已复制为 Markdown",
-    "description": "复制成功提示"
+  "contextMenuCopySelectionAsMarkdown": {
+    "message": "复制选区为 Markdown",
+    "description": "选区右键菜单标题"
+  },
+  "toastCopiedSelectionAsMarkdown": {
+    "message": "已复制选区为 Markdown",
+    "description": "选区复制成功提示"
+  },
+  "toastCopiedBodyAsMarkdown": {
+    "message": "已复制正文为 Markdown",
+    "description": "正文复制成功提示"
   },
   "errorCopyFailedGeneric": {
     "message": "复制失败",
@@ -79,6 +87,30 @@
     "message": "复制失败，请手动重试",
     "description": "剪贴板写入失败提示"
   },
+  "errorRightClickPostFirst": {
+    "message": "请在目标帖子卡片内右键后重试",
+    "description": "X 时间线未命中帖子卡片"
+  },
+  "errorEditableSelectionNotSupported": {
+    "message": "当前选区位于输入区域，请改为选中页面内容后重试",
+    "description": "输入区域选区不支持 DOM 提取"
+  },
+  "errorNoValidSelection": {
+    "message": "未检测到有效选区",
+    "description": "选区模式下未找到有效选区"
+  },
+  "errorPageNotReadable": {
+    "message": "未识别为文章，请选中内容后重试",
+    "description": "当前页面不像可提取的文章"
+  },
+  "errorPageInjectionBlocked": {
+    "message": "当前页面不允许注入脚本，请改到普通网页后重试",
+    "description": "当前页面不支持按需注入"
+  },
+  "errorReadabilityUnavailable": {
+    "message": "正文提取器未加载，请刷新页面后重试",
+    "description": "Readability 未成功加载"
+  },
   "markdownAuthorLine": {
     "message": "作者: $1",
     "description": "Markdown 作者行",
@@ -106,6 +138,16 @@
       "value": {
         "content": "$1",
         "example": "https://x.com/example/status/1"
+      }
+    }
+  },
+  "markdownSiteLine": {
+    "message": "站点: $1",
+    "description": "Markdown 站点行",
+    "placeholders": {
+      "value": {
+        "content": "$1",
+        "example": "developer.chrome.com"
       }
     }
   },

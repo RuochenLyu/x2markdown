@@ -5,6 +5,7 @@
   "version": "1.2.1",
   "default_locale": "en",
   "permissions": [
+    "activeTab",
     "clipboardWrite",
     "contextMenus",
     "scripting"
@@ -24,7 +25,8 @@
         "https://x.com/*"
       ],
       "js": [
-        "content.js"
+        "shared.js",
+        "content-x.js"
       ],
       "css": [
         "content.css"

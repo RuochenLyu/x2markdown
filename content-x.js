@@ -1,22 +1,45 @@
 (() => {
   "use strict";
 
-  if (window.__x2markdownInjected) {
+  if (window.__x2markdownXInjected) {
     return;
   }
 
-  window.__x2markdownInjected = true;
+  window.__x2markdownXInjected = true;
+
+  const shared = window.__x2markdownShared;
+  if (!shared) {
+    return;
+  }
+
+  const {
+    buildGenericMarkdown,
+    cleanPageUrl,
+    collectTextTokens,
+    copyToClipboard,
+    extractInlineMarkdown,
+    extractSelectionPayload,
+    firstVisibleElement,
+    formatAuthor,
+    formatTimeValue,
+    isVisible,
+    normalizeMarkdownBlock,
+    normalizeMediaUrl,
+    normalizeText,
+    showToast,
+    t,
+    toAbsoluteUrl,
+    unique,
+    uniqueByKey
+  } = shared;
 
   const STATE = {
-    toastTimer: null,
     contextMenuTargetNode: null,
     contextMenuPost: null,
-    contextMenuStatusUrl: "",
-    menuVisible: null
+    contextMenuStatusUrl: ""
   };
 
   const COPY_MESSAGE_TYPE = "COPY_MARKDOWN_FROM_PAGE";
-  const MENU_VISIBILITY_MESSAGE_TYPE = "SET_CONTEXT_MENU_VISIBILITY";
   const PATH_PATTERNS = {
     status: /^\/[^/]+\/status\/\d+(?:\/)?$/,
     article: /^\/[^/]+\/article\/\d+(?:\/)?$/
@@ -48,7 +71,6 @@
     'section[data-block="true"]',
     '[data-testid="markdown-code-block"]'
   ].join(", ");
-  const UI_LANGUAGE = getUiLanguage();
 
   document.addEventListener("contextmenu", handleContextMenuEvent, true);
 
@@ -58,7 +80,7 @@
         return undefined;
       }
 
-      void handleCopyRequest()
+      void handleCopyRequest(message.mode || "main")
         .then(() => {
           sendResponse({ ok: true });
         })
@@ -76,7 +98,17 @@
     });
   }
 
-  async function handleCopyRequest() {
+  async function handleCopyRequest(mode) {
+    if (mode === "selection") {
+      const selectionPayload = extractSelectionPayload();
+      if (!selectionPayload) {
+        throw new Error(t("errorNoValidSelection", undefined, "No valid selection found"));
+      }
+      await copyToClipboard(buildGenericMarkdown(selectionPayload));
+      showToast(t("toastCopiedSelectionAsMarkdown", undefined, "Copied selection as Markdown"));
+      return;
+    }
+
     const pageType = getSupportedPageType(location.pathname);
     const payload =
       pageType === "status"
@@ -87,7 +119,7 @@
     const markdown = buildMarkdown(payload);
 
     await copyToClipboard(markdown);
-    showToast(t("toastCopiedAsMarkdown", undefined, "Copied as Markdown"));
+    showToast(t("toastCopiedBodyAsMarkdown", undefined, "Copied body as Markdown"));
   }
 
   function getSupportedPageType(pathname) {
@@ -137,29 +169,24 @@
     const pageType = getSupportedPageType(location.pathname);
     if (pageType) {
       clearContextMenuTarget();
-      void syncContextMenuVisibility(true);
       return;
     }
 
     const article = findContextMenuArticle(event.target);
     if (!(article instanceof HTMLElement) || !isVisible(article)) {
       clearContextMenuTarget();
-      void syncContextMenuVisibility(false);
       return;
     }
 
     const statusUrl = extractPrimaryStatusUrl(article);
     if (!statusUrl) {
       clearContextMenuTarget();
-      void syncContextMenuVisibility(false);
       return;
     }
 
     STATE.contextMenuTargetNode = event.target instanceof Node ? event.target : null;
     STATE.contextMenuPost = article;
     STATE.contextMenuStatusUrl = statusUrl;
-
-    void syncContextMenuVisibility(true);
   }
 
   async function extractContextMenuPostPage() {
@@ -241,6 +268,10 @@
   }
 
   function resolveContextMenuPostArticle() {
+    if (!STATE.contextMenuStatusUrl) {
+      throw new Error(t("errorRightClickPostFirst", undefined, "Right-click inside the target post card and try again"));
+    }
+
     if (isReusableContextMenuArticle(STATE.contextMenuPost)) {
       return STATE.contextMenuPost;
     }
@@ -1092,7 +1123,8 @@
       lines.push(`# ${payload.title}`, "");
     }
 
-    lines.push(t("markdownAuthorLine", formatAuthor(payload.author), `Author: ${formatAuthor(payload.author)}`));
+    const authorText = formatAuthor(payload.author) || t("unknownAuthor", undefined, "Unknown author");
+    lines.push(t("markdownAuthorLine", authorText, `Author: ${authorText}`));
 
     if (payload.time) {
       lines.push(t("markdownTimeLine", payload.time, `Time: ${payload.time}`));
@@ -1102,7 +1134,8 @@
 
     if (quote) {
       lines.push("", t("markdownQuoteSectionLabel", undefined, "Quoted Post:"));
-      lines.push(t("markdownAuthorLine", formatAuthor(quote.author), `Author: ${formatAuthor(quote.author)}`));
+      const quotedAuthorText = formatAuthor(quote.author) || t("unknownAuthor", undefined, "Unknown author");
+      lines.push(t("markdownAuthorLine", quotedAuthorText, `Author: ${quotedAuthorText}`));
 
       if (quote.time) {
         lines.push(t("markdownTimeLine", quote.time, `Time: ${quote.time}`));
@@ -1138,307 +1171,16 @@
     return lines.join("\n").trim();
   }
 
-  async function syncContextMenuVisibility(visible) {
-    STATE.menuVisible = visible;
-
-    if (typeof chrome === "undefined" || !chrome.runtime || typeof chrome.runtime.sendMessage !== "function") {
-      return;
-    }
-
-    try {
-      await chrome.runtime.sendMessage({
-        type: MENU_VISIBILITY_MESSAGE_TYPE,
-        visible
-      });
-    } catch (error) {
-      // Ignore transient service worker timing errors and keep local state authoritative.
-    }
-  }
-
-  function formatAuthor(author) {
-    if (author.displayName && author.handle) {
-      return `${author.displayName} (${author.handle})`;
-    }
-
-    return author.displayName || author.handle || t("unknownAuthor", undefined, "Unknown author");
-  }
-
-  async function copyToClipboard(text) {
-    if (copyWithExecCommand(text)) {
-      return;
-    }
-
-    if (navigator.clipboard && typeof navigator.clipboard.writeText === "function") {
-      try {
-        await navigator.clipboard.writeText(text);
-        return;
-      } catch (error) {
-        // Some pages reject Clipboard API calls in content scripts even when fallback copy works.
-      }
-    }
-
-    throw new Error(t("errorClipboardRetry", undefined, "Copy failed, please try again manually"));
-  }
-
-  function copyWithExecCommand(text) {
-    const textarea = document.createElement("textarea");
-    textarea.value = text;
-    textarea.setAttribute("readonly", "true");
-    textarea.style.position = "fixed";
-    textarea.style.opacity = "0";
-    textarea.style.pointerEvents = "none";
-    textarea.style.top = "0";
-    textarea.style.left = "0";
-
-    document.body.appendChild(textarea);
-    try {
-      textarea.focus();
-      textarea.select();
-      return document.execCommand("copy");
-    } catch (error) {
-      return false;
-    } finally {
-      textarea.remove();
-    }
-  }
-
-  function showToast(message) {
-    let toast = document.querySelector("[data-x2markdown-toast='true']");
-    if (!(toast instanceof HTMLElement)) {
-      toast = document.createElement("div");
-      toast.dataset.x2markdownToast = "true";
-      toast.className = "x2markdown-toast";
-      document.body.appendChild(toast);
-    }
-
-    toast.textContent = message;
-    toast.classList.add("x2markdown-toast--visible");
-
-    if (STATE.toastTimer) {
-      window.clearTimeout(STATE.toastTimer);
-    }
-
-    STATE.toastTimer = window.setTimeout(() => {
-      toast.classList.remove("x2markdown-toast--visible");
-    }, 2200);
-  }
-
-  function extractInlineMarkdown(node) {
-    const parts = [];
-
-    for (const child of node.childNodes) {
-      if (child.nodeType === Node.TEXT_NODE) {
-        parts.push(child.textContent || "");
-        continue;
-      }
-
-      if (!(child instanceof Element) || !isVisible(child)) {
-        continue;
-      }
-
-      if (child.tagName === "BR") {
-        parts.push("\n");
-        continue;
-      }
-
-      if (child.tagName === "IMG") {
-        const alt = normalizeText(child.getAttribute("alt"));
-        if (alt && alt.toLowerCase() !== "image") {
-          parts.push(alt);
-        }
-        continue;
-      }
-
-      if (child instanceof HTMLAnchorElement) {
-        const href = toAbsoluteUrl(child.getAttribute("href"));
-        const text = normalizeMarkdownBlock(extractInlineMarkdown(child) || child.textContent || "");
-
-        if (!href) {
-          parts.push(text);
-          continue;
-        }
-
-        if (!text) {
-          parts.push(href);
-          continue;
-        }
-
-        if (looksLikeAbsoluteUrl(text)) {
-          parts.push(href);
-          continue;
-        }
-
-        parts.push(`[${escapeMarkdownText(text)}](${href})`);
-        continue;
-      }
-
-      parts.push(extractInlineMarkdown(child));
-    }
-
-    return normalizeInlineText(parts.join(""));
-  }
-
-  function collectTextTokens(root) {
-    const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, {
-      acceptNode(node) {
-        if (!node.textContent || !node.textContent.trim()) {
-          return NodeFilter.FILTER_REJECT;
-        }
-
-        const parent = node.parentElement;
-        if (!parent || !isVisible(parent)) {
-          return NodeFilter.FILTER_REJECT;
-        }
-
-        if (parent.closest("[role='menu'], [role='button'], button")) {
-          return NodeFilter.FILTER_REJECT;
-        }
-
-        return NodeFilter.FILTER_ACCEPT;
-      }
-    });
-
-    const tokens = [];
-    let currentNode = walker.nextNode();
-    while (currentNode) {
-      const value = normalizeText(currentNode.textContent);
-      if (value) {
-        tokens.push(value);
-      }
-
-      currentNode = walker.nextNode();
-    }
-
-    return unique(tokens);
-  }
-
-  function firstVisibleElement(nodes) {
-    for (const node of nodes) {
-      if (node instanceof HTMLElement && isVisible(node)) {
-        return node;
-      }
-    }
-
-    return null;
-  }
-
-  function isVisible(element) {
-    if (!(element instanceof Element)) {
-      return false;
-    }
-
-    const style = window.getComputedStyle(element);
-    if (style.display === "none" || style.visibility === "hidden" || style.opacity === "0") {
-      return false;
-    }
-
-    const rect = element.getBoundingClientRect();
-    return rect.width > 0 && rect.height > 0;
-  }
-
-  function normalizeText(value) {
-    return (value || "").replace(/\u00a0/g, " ").replace(/\s+/g, " ").trim();
-  }
-
-  function normalizeInlineText(value) {
-    return (value || "")
-      .replace(/\u00a0/g, " ")
-      .replace(/[ \t]+\n/g, "\n")
-      .replace(/\n[ \t]+/g, "\n")
-      .replace(/[ \t]{2,}/g, " ");
-  }
-
-  function normalizeMarkdownBlock(value) {
-    return normalizeInlineText(value).replace(/\n{3,}/g, "\n\n").trim();
-  }
-
-  function normalizeMediaUrl(value) {
-    try {
-      return new URL(value, location.origin).href;
-    } catch (error) {
-      return "";
-    }
-  }
-
-  function toAbsoluteUrl(value) {
-    if (!value) {
-      return "";
-    }
-
-    try {
-      return new URL(value, location.origin).href;
-    } catch (error) {
-      return "";
-    }
-  }
-
-  function cleanPageUrl(value) {
-    try {
-      const url = new URL(value, location.origin);
-      url.search = "";
-      url.hash = "";
-      return url.href;
-    } catch (error) {
-      return value;
-    }
-  }
-
   function extractStatusIdFromUrl(value) {
     const cleanUrl = toAbsoluteUrl(value);
     const match = cleanUrl.match(/^https:\/\/x\.com\/[^/]+\/status\/(\d+)(?:[/?#]|$)/);
     return match ? match[1] : "";
   }
 
-  function t(messageName, substitutions, fallback = "") {
-    const message =
-      typeof chrome !== "undefined" && chrome.i18n && typeof chrome.i18n.getMessage === "function"
-        ? chrome.i18n.getMessage(messageName, substitutions)
-        : "";
-
-    return message || fallback || messageName;
-  }
-
-  function getUiLanguage() {
-    if (typeof chrome !== "undefined" && chrome.i18n && typeof chrome.i18n.getUILanguage === "function") {
-      return chrome.i18n.getUILanguage();
-    }
-
-    return navigator.language || "zh-CN";
-  }
-
   function wait(milliseconds) {
     return new Promise((resolve) => {
       window.setTimeout(resolve, milliseconds);
     });
-  }
-
-  function escapeMarkdownText(value) {
-    return value.replace(/\\/g, "\\\\").replace(/\[/g, "\\[").replace(/\]/g, "\\]");
-  }
-
-  function formatTimeValue(dateTime, fallbackText = "") {
-    if (dateTime) {
-      const date = new Date(dateTime);
-      if (!Number.isNaN(date.getTime())) {
-        return new Intl.DateTimeFormat(UI_LANGUAGE, {
-          year: "numeric",
-          month: "2-digit",
-          day: "2-digit",
-          hour: "2-digit",
-          minute: "2-digit",
-          second: "2-digit",
-          hour12: false
-        })
-          .format(date)
-          .replace(/\//g, "-");
-      }
-    }
-
-    return fallbackText;
-  }
-
-  function looksLikeAbsoluteUrl(value) {
-    return /^https?:\/\//i.test(value);
   }
 
   function looksLikeCount(value) {
@@ -1480,22 +1222,5 @@
     } catch (error) {
       return "";
     }
-  }
-
-  function uniqueByKey(values, getKey) {
-    const seen = new Set();
-    return values.filter((value) => {
-      const key = getKey(value);
-      if (seen.has(key)) {
-        return false;
-      }
-
-      seen.add(key);
-      return true;
-    });
-  }
-
-  function unique(values) {
-    return Array.from(new Set(values));
   }
 })();
