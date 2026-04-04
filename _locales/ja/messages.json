@@ -1,0 +1,194 @@
+{
+  "extName": {
+    "message": "X2Markdown",
+    "description": "拡張機能名"
+  },
+  "extDescription": {
+    "message": "ワンクリックでウェブページや選択範囲をクリーンな Markdown に変換。LLM チャット、ナレッジベース、メモに最適。x.com のポストや記事にも対応。",
+    "description": "拡張機能の説明"
+  },
+  "contextMenuCopyBodyAsMarkdown": {
+    "message": "本文を Markdown でコピー",
+    "description": "本文コンテキストメニュー"
+  },
+  "contextMenuCopySelectionAsMarkdown": {
+    "message": "選択範囲を Markdown でコピー",
+    "description": "選択範囲コンテキストメニュー"
+  },
+  "toastCopiedSelectionAsMarkdown": {
+    "message": "選択範囲を Markdown でコピーしました",
+    "description": "選択範囲コピー成功トースト"
+  },
+  "toastCopiedBodyAsMarkdown": {
+    "message": "本文を Markdown でコピーしました",
+    "description": "本文コピー成功トースト"
+  },
+  "errorCopyFailedGeneric": {
+    "message": "コピーに失敗しました",
+    "description": "コピー失敗の汎用メッセージ"
+  },
+  "errorPostNotFound": {
+    "message": "現在のポストが見つかりません",
+    "description": "ポストが見つからない"
+  },
+  "errorUnsupportedPostPage": {
+    "message": "このページはサポートされていないポストページです",
+    "description": "サポート外のポストページ"
+  },
+  "errorCurrentPostBodyNotFound": {
+    "message": "現在のポスト本文が見つかりません",
+    "description": "ポスト本文が見つからない"
+  },
+  "errorUnsupportedArticlePage": {
+    "message": "このページはサポートされていない記事ページです",
+    "description": "サポート外の記事ページ"
+  },
+  "errorArticleContainerNotFound": {
+    "message": "記事コンテナが見つかりません",
+    "description": "記事コンテナが見つからない"
+  },
+  "errorArticleTitleNotFound": {
+    "message": "記事タイトルが見つかりません",
+    "description": "記事タイトルが見つからない"
+  },
+  "errorUnsupportedPath": {
+    "message": "このページパスはサポートされていません",
+    "description": "サポート外のページパス"
+  },
+  "errorInvalidPostNode": {
+    "message": "無効なポストノードです",
+    "description": "ポストノードが無効"
+  },
+  "errorAuthorInfoNotFound": {
+    "message": "著者情報が見つかりません",
+    "description": "著者情報が見つからない"
+  },
+  "errorPublishTimeNotFound": {
+    "message": "公開日時が見つかりません",
+    "description": "公開日時が見つからない"
+  },
+  "errorPostLinkNotFound": {
+    "message": "ポストリンクが見つかりません",
+    "description": "ポストリンクが見つからない"
+  },
+  "errorBodyNotFound": {
+    "message": "本文が見つかりません",
+    "description": "本文が見つからない"
+  },
+  "errorInvalidArticleNode": {
+    "message": "無効な記事ノードです",
+    "description": "記事ノードが無効"
+  },
+  "errorArticleBodyNotFound": {
+    "message": "記事本文が見つかりません",
+    "description": "記事本文が見つからない"
+  },
+  "errorClipboardRetry": {
+    "message": "コピーに失敗しました。手動でもう一度お試しください",
+    "description": "クリップボード書き込み失敗"
+  },
+  "errorRightClickPostFirst": {
+    "message": "対象のポストカード内で右クリックしてから再試行してください",
+    "description": "ポストカードが選択されていない"
+  },
+  "errorEditableSelectionNotSupported": {
+    "message": "入力フィールド内の選択はサポートされていません。ページコンテンツを選択してください。",
+    "description": "編集可能フィールド内の選択は非対応"
+  },
+  "errorNoValidSelection": {
+    "message": "有効な選択範囲が見つかりません",
+    "description": "有効な選択範囲がない"
+  },
+  "errorPageNotReadable": {
+    "message": "このページは記事として認識できません。コンテンツを選択してから再試行してください。",
+    "description": "ページが記事として認識できない"
+  },
+  "errorPageInjectionBlocked": {
+    "message": "このページではスクリプトの実行が許可されていません。通常のウェブページでお試しください。",
+    "description": "スクリプト注入がブロックされた"
+  },
+  "errorReadabilityUnavailable": {
+    "message": "記事抽出エンジンが読み込まれませんでした。ページを更新してから再試行してください。",
+    "description": "Readability の読み込み失敗"
+  },
+  "markdownAuthorLine": {
+    "message": "著者: $1",
+    "description": "Markdown 著者行",
+    "placeholders": {
+      "value": {
+        "content": "$1",
+        "example": "Example Author (@example)"
+      }
+    }
+  },
+  "markdownTimeLine": {
+    "message": "日時: $1",
+    "description": "Markdown 日時行",
+    "placeholders": {
+      "value": {
+        "content": "$1",
+        "example": "2026-03-21 12:18:32"
+      }
+    }
+  },
+  "markdownLinkLine": {
+    "message": "リンク: $1",
+    "description": "Markdown リンク行",
+    "placeholders": {
+      "value": {
+        "content": "$1",
+        "example": "https://x.com/example/status/1"
+      }
+    }
+  },
+  "markdownSiteLine": {
+    "message": "サイト: $1",
+    "description": "Markdown サイト行",
+    "placeholders": {
+      "value": {
+        "content": "$1",
+        "example": "developer.chrome.com"
+      }
+    }
+  },
+  "markdownBodyLabel": {
+    "message": "本文:",
+    "description": "Markdown 本文見出し"
+  },
+  "markdownQuoteSectionLabel": {
+    "message": "引用ポスト:",
+    "description": "Markdown 引用セクション見出し"
+  },
+  "markdownQuotedImageSectionLabel": {
+    "message": "引用画像:",
+    "description": "Markdown 引用画像見出し"
+  },
+  "markdownImageSectionLabel": {
+    "message": "画像:",
+    "description": "Markdown 画像見出し"
+  },
+  "markdownImageLabel": {
+    "message": "画像 $1",
+    "description": "Markdown 画像ラベル",
+    "placeholders": {
+      "index": {
+        "content": "$1",
+        "example": "1"
+      }
+    }
+  },
+  "markdownQuotedImageLabel": {
+    "message": "引用画像 $1",
+    "description": "Markdown 引用画像ラベル",
+    "placeholders": {
+      "index": {
+        "content": "$1",
+        "example": "1"
+      }
+    }
+  },
+  "unknownAuthor": {
+    "message": "不明な著者",
+    "description": "不明な著者のフォールバック"
+  }
+}

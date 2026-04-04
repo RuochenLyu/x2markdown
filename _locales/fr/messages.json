@@ -1,0 +1,194 @@
+{
+  "extName": {
+    "message": "X2Markdown",
+    "description": "Nom de l'extension"
+  },
+  "extDescription": {
+    "message": "Convertissez n'importe quelle page web ou sélection en Markdown propre en un clic — prêt pour les chats LLM, bases de connaissances ou prises de notes. Compatible avec les publications et articles x.com.",
+    "description": "Description de l'extension"
+  },
+  "contextMenuCopyBodyAsMarkdown": {
+    "message": "Copier le corps en Markdown",
+    "description": "Menu contextuel du corps"
+  },
+  "contextMenuCopySelectionAsMarkdown": {
+    "message": "Copier la sélection en Markdown",
+    "description": "Menu contextuel de sélection"
+  },
+  "toastCopiedSelectionAsMarkdown": {
+    "message": "Sélection copiée en Markdown",
+    "description": "Toast de sélection copiée"
+  },
+  "toastCopiedBodyAsMarkdown": {
+    "message": "Corps copié en Markdown",
+    "description": "Toast de corps copié"
+  },
+  "errorCopyFailedGeneric": {
+    "message": "Échec de la copie",
+    "description": "Erreur générique de copie"
+  },
+  "errorPostNotFound": {
+    "message": "Publication actuelle introuvable",
+    "description": "La publication n'a pas pu être localisée"
+  },
+  "errorUnsupportedPostPage": {
+    "message": "Cette page de publication n'est pas prise en charge",
+    "description": "Page de publication non prise en charge"
+  },
+  "errorCurrentPostBodyNotFound": {
+    "message": "Corps de la publication actuelle introuvable",
+    "description": "Corps de la publication introuvable"
+  },
+  "errorUnsupportedArticlePage": {
+    "message": "Cette page d'article n'est pas prise en charge",
+    "description": "Page d'article non prise en charge"
+  },
+  "errorArticleContainerNotFound": {
+    "message": "Conteneur de l'article introuvable",
+    "description": "Conteneur d'article introuvable"
+  },
+  "errorArticleTitleNotFound": {
+    "message": "Titre de l'article introuvable",
+    "description": "Titre d'article introuvable"
+  },
+  "errorUnsupportedPath": {
+    "message": "Le chemin de la page n'est pas pris en charge",
+    "description": "Chemin de page non pris en charge"
+  },
+  "errorInvalidPostNode": {
+    "message": "Nœud de publication non valide",
+    "description": "Le nœud de publication n'est pas valide"
+  },
+  "errorAuthorInfoNotFound": {
+    "message": "Informations sur l'auteur introuvables",
+    "description": "Informations sur l'auteur introuvables"
+  },
+  "errorPublishTimeNotFound": {
+    "message": "Heure de publication introuvable",
+    "description": "Heure de publication introuvable"
+  },
+  "errorPostLinkNotFound": {
+    "message": "Lien de la publication introuvable",
+    "description": "Lien de publication introuvable"
+  },
+  "errorBodyNotFound": {
+    "message": "Contenu du corps introuvable",
+    "description": "Contenu du corps introuvable"
+  },
+  "errorInvalidArticleNode": {
+    "message": "Nœud d'article non valide",
+    "description": "Le nœud d'article n'est pas valide"
+  },
+  "errorArticleBodyNotFound": {
+    "message": "Corps de l'article introuvable",
+    "description": "Corps de l'article introuvable"
+  },
+  "errorClipboardRetry": {
+    "message": "Échec de la copie, veuillez réessayer manuellement",
+    "description": "Erreur d'écriture dans le presse-papiers"
+  },
+  "errorRightClickPostFirst": {
+    "message": "Faites un clic droit à l'intérieur de la carte de publication et réessayez",
+    "description": "Aucune carte de publication sélectionnée"
+  },
+  "errorEditableSelectionNotSupported": {
+    "message": "La sélection se trouve dans un champ modifiable. Veuillez sélectionner le contenu de la page à la place.",
+    "description": "Sélection dans un champ modifiable non prise en charge"
+  },
+  "errorNoValidSelection": {
+    "message": "Aucune sélection valide trouvée",
+    "description": "Pas de sélection valide"
+  },
+  "errorPageNotReadable": {
+    "message": "Cette page ne semble pas être un article lisible. Sélectionnez le contenu et réessayez.",
+    "description": "La page ne semble pas être un article lisible"
+  },
+  "errorPageInjectionBlocked": {
+    "message": "Cette page n'autorise pas l'injection de scripts. Essayez sur une page web normale.",
+    "description": "Injection de scripts bloquée"
+  },
+  "errorReadabilityUnavailable": {
+    "message": "L'extracteur d'articles n'a pas été chargé. Actualisez la page et réessayez.",
+    "description": "Readability n'a pas été chargé"
+  },
+  "markdownAuthorLine": {
+    "message": "Auteur : $1",
+    "description": "Ligne d'auteur en Markdown",
+    "placeholders": {
+      "value": {
+        "content": "$1",
+        "example": "Example Author (@example)"
+      }
+    }
+  },
+  "markdownTimeLine": {
+    "message": "Heure : $1",
+    "description": "Ligne d'heure en Markdown",
+    "placeholders": {
+      "value": {
+        "content": "$1",
+        "example": "2026-03-21 12:18:32"
+      }
+    }
+  },
+  "markdownLinkLine": {
+    "message": "Lien : $1",
+    "description": "Ligne de lien en Markdown",
+    "placeholders": {
+      "value": {
+        "content": "$1",
+        "example": "https://x.com/example/status/1"
+      }
+    }
+  },
+  "markdownSiteLine": {
+    "message": "Site : $1",
+    "description": "Ligne de site en Markdown",
+    "placeholders": {
+      "value": {
+        "content": "$1",
+        "example": "developer.chrome.com"
+      }
+    }
+  },
+  "markdownBodyLabel": {
+    "message": "Corps :",
+    "description": "En-tête du corps en Markdown"
+  },
+  "markdownQuoteSectionLabel": {
+    "message": "Publication citée :",
+    "description": "En-tête de citation en Markdown"
+  },
+  "markdownQuotedImageSectionLabel": {
+    "message": "Images citées :",
+    "description": "En-tête d'images citées en Markdown"
+  },
+  "markdownImageSectionLabel": {
+    "message": "Images :",
+    "description": "En-tête d'images en Markdown"
+  },
+  "markdownImageLabel": {
+    "message": "Image $1",
+    "description": "Étiquette d'image en Markdown",
+    "placeholders": {
+      "index": {
+        "content": "$1",
+        "example": "1"
+      }
+    }
+  },
+  "markdownQuotedImageLabel": {
+    "message": "Image citée $1",
+    "description": "Étiquette d'image citée en Markdown",
+    "placeholders": {
+      "index": {
+        "content": "$1",
+        "example": "1"
+      }
+    }
+  },
+  "unknownAuthor": {
+    "message": "Auteur inconnu",
+    "description": "Texte de remplacement pour auteur inconnu"
+  }
+}

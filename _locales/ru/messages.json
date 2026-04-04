@@ -1,0 +1,194 @@
+{
+  "extName": {
+    "message": "X2Markdown",
+    "description": "Название расширения"
+  },
+  "extDescription": {
+    "message": "Конвертируйте любую веб-страницу или выделение в чистый Markdown одним кликом — для чатов с LLM, баз знаний или заметок. Поддержка постов и статей x.com.",
+    "description": "Описание расширения"
+  },
+  "contextMenuCopyBodyAsMarkdown": {
+    "message": "Копировать содержимое как Markdown",
+    "description": "Контекстное меню для содержимого"
+  },
+  "contextMenuCopySelectionAsMarkdown": {
+    "message": "Копировать выделение как Markdown",
+    "description": "Контекстное меню для выделения"
+  },
+  "toastCopiedSelectionAsMarkdown": {
+    "message": "Выделение скопировано как Markdown",
+    "description": "Уведомление об успешном копировании выделения"
+  },
+  "toastCopiedBodyAsMarkdown": {
+    "message": "Содержимое скопировано как Markdown",
+    "description": "Уведомление об успешном копировании содержимого"
+  },
+  "errorCopyFailedGeneric": {
+    "message": "Не удалось скопировать",
+    "description": "Общая ошибка копирования"
+  },
+  "errorPostNotFound": {
+    "message": "Текущий пост не найден",
+    "description": "Пост не удалось найти"
+  },
+  "errorUnsupportedPostPage": {
+    "message": "Эта страница поста не поддерживается",
+    "description": "Неподдерживаемая страница поста"
+  },
+  "errorCurrentPostBodyNotFound": {
+    "message": "Содержимое текущего поста не найдено",
+    "description": "Содержимое поста не найдено"
+  },
+  "errorUnsupportedArticlePage": {
+    "message": "Эта страница статьи не поддерживается",
+    "description": "Неподдерживаемая страница статьи"
+  },
+  "errorArticleContainerNotFound": {
+    "message": "Контейнер статьи не найден",
+    "description": "Контейнер статьи не найден"
+  },
+  "errorArticleTitleNotFound": {
+    "message": "Заголовок статьи не найден",
+    "description": "Заголовок статьи не найден"
+  },
+  "errorUnsupportedPath": {
+    "message": "Путь страницы не поддерживается",
+    "description": "Неподдерживаемый путь страницы"
+  },
+  "errorInvalidPostNode": {
+    "message": "Недопустимый узел поста",
+    "description": "Узел поста недействителен"
+  },
+  "errorAuthorInfoNotFound": {
+    "message": "Информация об авторе не найдена",
+    "description": "Информация об авторе не найдена"
+  },
+  "errorPublishTimeNotFound": {
+    "message": "Время публикации не найдено",
+    "description": "Время публикации не найдено"
+  },
+  "errorPostLinkNotFound": {
+    "message": "Ссылка на пост не найдена",
+    "description": "Ссылка на пост не найдена"
+  },
+  "errorBodyNotFound": {
+    "message": "Содержимое не найдено",
+    "description": "Содержимое не найдено"
+  },
+  "errorInvalidArticleNode": {
+    "message": "Недопустимый узел статьи",
+    "description": "Узел статьи недействителен"
+  },
+  "errorArticleBodyNotFound": {
+    "message": "Текст статьи не найден",
+    "description": "Текст статьи не найден"
+  },
+  "errorClipboardRetry": {
+    "message": "Не удалось скопировать, попробуйте вручную",
+    "description": "Ошибка записи в буфер обмена"
+  },
+  "errorRightClickPostFirst": {
+    "message": "Щёлкните правой кнопкой внутри карточки поста и попробуйте снова",
+    "description": "Карточка поста не выбрана"
+  },
+  "errorEditableSelectionNotSupported": {
+    "message": "Выделение находится в редактируемом поле. Выделите содержимое страницы.",
+    "description": "Выделение в редактируемом поле не поддерживается"
+  },
+  "errorNoValidSelection": {
+    "message": "Допустимое выделение не найдено",
+    "description": "Нет допустимого выделения"
+  },
+  "errorPageNotReadable": {
+    "message": "Эта страница не распознана как статья. Выделите содержимое и попробуйте снова.",
+    "description": "Страница не распознана как статья"
+  },
+  "errorPageInjectionBlocked": {
+    "message": "Эта страница не позволяет внедрять скрипты. Попробуйте на обычной веб-странице.",
+    "description": "Внедрение скриптов заблокировано"
+  },
+  "errorReadabilityUnavailable": {
+    "message": "Экстрактор статей не загрузился. Обновите страницу и попробуйте снова.",
+    "description": "Readability не удалось загрузить"
+  },
+  "markdownAuthorLine": {
+    "message": "Автор: $1",
+    "description": "Строка автора в Markdown",
+    "placeholders": {
+      "value": {
+        "content": "$1",
+        "example": "Example Author (@example)"
+      }
+    }
+  },
+  "markdownTimeLine": {
+    "message": "Время: $1",
+    "description": "Строка времени в Markdown",
+    "placeholders": {
+      "value": {
+        "content": "$1",
+        "example": "2026-03-21 12:18:32"
+      }
+    }
+  },
+  "markdownLinkLine": {
+    "message": "Ссылка: $1",
+    "description": "Строка ссылки в Markdown",
+    "placeholders": {
+      "value": {
+        "content": "$1",
+        "example": "https://x.com/example/status/1"
+      }
+    }
+  },
+  "markdownSiteLine": {
+    "message": "Сайт: $1",
+    "description": "Строка сайта в Markdown",
+    "placeholders": {
+      "value": {
+        "content": "$1",
+        "example": "developer.chrome.com"
+      }
+    }
+  },
+  "markdownBodyLabel": {
+    "message": "Текст:",
+    "description": "Заголовок текста в Markdown"
+  },
+  "markdownQuoteSectionLabel": {
+    "message": "Цитируемый пост:",
+    "description": "Заголовок цитаты в Markdown"
+  },
+  "markdownQuotedImageSectionLabel": {
+    "message": "Цитируемые изображения:",
+    "description": "Заголовок цитируемых изображений в Markdown"
+  },
+  "markdownImageSectionLabel": {
+    "message": "Изображения:",
+    "description": "Заголовок изображений в Markdown"
+  },
+  "markdownImageLabel": {
+    "message": "Изображение $1",
+    "description": "Метка изображения в Markdown",
+    "placeholders": {
+      "index": {
+        "content": "$1",
+        "example": "1"
+      }
+    }
+  },
+  "markdownQuotedImageLabel": {
+    "message": "Цитируемое изображение $1",
+    "description": "Метка цитируемого изображения в Markdown",
+    "placeholders": {
+      "index": {
+        "content": "$1",
+        "example": "1"
+      }
+    }
+  },
+  "unknownAuthor": {
+    "message": "Неизвестный автор",
+    "description": "Текст-заполнитель для неизвестного автора"
+  }
+}

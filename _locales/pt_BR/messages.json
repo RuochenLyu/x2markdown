@@ -1,0 +1,194 @@
+{
+  "extName": {
+    "message": "X2Markdown",
+    "description": "Nome da extensão"
+  },
+  "extDescription": {
+    "message": "Converta qualquer página ou seleção em Markdown limpo com um clique — pronto para chats com LLM, bases de conhecimento ou anotações. Suporte extra para posts e artigos do x.com.",
+    "description": "Descrição da extensão"
+  },
+  "contextMenuCopyBodyAsMarkdown": {
+    "message": "Copiar corpo como Markdown",
+    "description": "Menu de contexto do corpo"
+  },
+  "contextMenuCopySelectionAsMarkdown": {
+    "message": "Copiar seleção como Markdown",
+    "description": "Menu de contexto da seleção"
+  },
+  "toastCopiedSelectionAsMarkdown": {
+    "message": "Seleção copiada como Markdown",
+    "description": "Toast de seleção copiada"
+  },
+  "toastCopiedBodyAsMarkdown": {
+    "message": "Corpo copiado como Markdown",
+    "description": "Toast de corpo copiado"
+  },
+  "errorCopyFailedGeneric": {
+    "message": "Falha ao copiar",
+    "description": "Erro genérico de cópia"
+  },
+  "errorPostNotFound": {
+    "message": "Post atual não encontrado",
+    "description": "O post não pôde ser localizado"
+  },
+  "errorUnsupportedPostPage": {
+    "message": "Esta não é uma página de post compatível",
+    "description": "Página de post não compatível"
+  },
+  "errorCurrentPostBodyNotFound": {
+    "message": "Corpo do post atual não encontrado",
+    "description": "Corpo do post não encontrado"
+  },
+  "errorUnsupportedArticlePage": {
+    "message": "Esta não é uma página de artigo compatível",
+    "description": "Página de artigo não compatível"
+  },
+  "errorArticleContainerNotFound": {
+    "message": "Contêiner do artigo não encontrado",
+    "description": "Contêiner do artigo não encontrado"
+  },
+  "errorArticleTitleNotFound": {
+    "message": "Título do artigo não encontrado",
+    "description": "Título do artigo não encontrado"
+  },
+  "errorUnsupportedPath": {
+    "message": "O caminho da página não é compatível",
+    "description": "Caminho de página não compatível"
+  },
+  "errorInvalidPostNode": {
+    "message": "Nó de post inválido",
+    "description": "O nó de post não é válido"
+  },
+  "errorAuthorInfoNotFound": {
+    "message": "Informações do autor não encontradas",
+    "description": "Informações do autor não encontradas"
+  },
+  "errorPublishTimeNotFound": {
+    "message": "Horário de publicação não encontrado",
+    "description": "Horário de publicação não encontrado"
+  },
+  "errorPostLinkNotFound": {
+    "message": "Link do post não encontrado",
+    "description": "Link do post não encontrado"
+  },
+  "errorBodyNotFound": {
+    "message": "Conteúdo do corpo não encontrado",
+    "description": "Conteúdo do corpo não encontrado"
+  },
+  "errorInvalidArticleNode": {
+    "message": "Nó de artigo inválido",
+    "description": "O nó de artigo não é válido"
+  },
+  "errorArticleBodyNotFound": {
+    "message": "Corpo do artigo não encontrado",
+    "description": "Corpo do artigo não encontrado"
+  },
+  "errorClipboardRetry": {
+    "message": "Falha ao copiar, tente novamente manualmente",
+    "description": "Erro de escrita na área de transferência"
+  },
+  "errorRightClickPostFirst": {
+    "message": "Clique com o botão direito dentro do cartão do post e tente novamente",
+    "description": "Nenhum cartão de post selecionado"
+  },
+  "errorEditableSelectionNotSupported": {
+    "message": "A seleção está dentro de um campo editável. Selecione o conteúdo da página.",
+    "description": "Seleção em campo editável não compatível"
+  },
+  "errorNoValidSelection": {
+    "message": "Nenhuma seleção válida encontrada",
+    "description": "Sem seleção válida"
+  },
+  "errorPageNotReadable": {
+    "message": "Esta página não parece ser um artigo legível. Selecione o conteúdo e tente novamente.",
+    "description": "A página não parece ser um artigo legível"
+  },
+  "errorPageInjectionBlocked": {
+    "message": "Esta página não permite injeção de scripts. Tente em uma página web normal.",
+    "description": "Injeção de scripts bloqueada"
+  },
+  "errorReadabilityUnavailable": {
+    "message": "O extrator de artigos não foi carregado. Atualize a página e tente novamente.",
+    "description": "Readability não foi carregado"
+  },
+  "markdownAuthorLine": {
+    "message": "Autor: $1",
+    "description": "Linha de autor em Markdown",
+    "placeholders": {
+      "value": {
+        "content": "$1",
+        "example": "Example Author (@example)"
+      }
+    }
+  },
+  "markdownTimeLine": {
+    "message": "Hora: $1",
+    "description": "Linha de hora em Markdown",
+    "placeholders": {
+      "value": {
+        "content": "$1",
+        "example": "2026-03-21 12:18:32"
+      }
+    }
+  },
+  "markdownLinkLine": {
+    "message": "Link: $1",
+    "description": "Linha de link em Markdown",
+    "placeholders": {
+      "value": {
+        "content": "$1",
+        "example": "https://x.com/example/status/1"
+      }
+    }
+  },
+  "markdownSiteLine": {
+    "message": "Site: $1",
+    "description": "Linha de site em Markdown",
+    "placeholders": {
+      "value": {
+        "content": "$1",
+        "example": "developer.chrome.com"
+      }
+    }
+  },
+  "markdownBodyLabel": {
+    "message": "Corpo:",
+    "description": "Cabeçalho do corpo em Markdown"
+  },
+  "markdownQuoteSectionLabel": {
+    "message": "Post citado:",
+    "description": "Cabeçalho de citação em Markdown"
+  },
+  "markdownQuotedImageSectionLabel": {
+    "message": "Imagens citadas:",
+    "description": "Cabeçalho de imagens citadas em Markdown"
+  },
+  "markdownImageSectionLabel": {
+    "message": "Imagens:",
+    "description": "Cabeçalho de imagens em Markdown"
+  },
+  "markdownImageLabel": {
+    "message": "Imagem $1",
+    "description": "Rótulo de imagem em Markdown",
+    "placeholders": {
+      "index": {
+        "content": "$1",
+        "example": "1"
+      }
+    }
+  },
+  "markdownQuotedImageLabel": {
+    "message": "Imagem citada $1",
+    "description": "Rótulo de imagem citada em Markdown",
+    "placeholders": {
+      "index": {
+        "content": "$1",
+        "example": "1"
+      }
+    }
+  },
+  "unknownAuthor": {
+    "message": "Autor desconhecido",
+    "description": "Texto de autor desconhecido"
+  }
+}

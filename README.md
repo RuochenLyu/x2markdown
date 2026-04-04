@@ -3,7 +3,7 @@
 English | [中文](README.zh-CN.md)
 
 <a href="https://chromewebstore.google.com/detail/x2markdown/acljfllclafamkhdjjkldogcadfbigmo">
-  <img src="https://raw.githubusercontent.com/GoogleChrome/webstore-docs/master/images/ChromeWebStore_BadgeWBorder_v2_206x58.png" alt="Available in the Chrome Web Store">
+  <img src="https://raw.githubusercontent.com/GoogleChrome/webstore-docs/refs/heads/master/images/ChromeWebStore_BadgeWBorder_v2_496x150.png" alt="Available in the Chrome Web Store" width="248" height="75">
 </a>
 
 `x2markdown` is a Chrome extension that converts visible webpage content into clean Markdown with one right-click — ready to paste into LLM chats, append to personal knowledge bases, or save as `.md` reference files. On `x.com`, it additionally provides dedicated export for posts and longform articles.

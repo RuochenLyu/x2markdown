@@ -1,0 +1,194 @@
+{
+  "extName": {
+    "message": "X2Markdown",
+    "description": "Name der Erweiterung"
+  },
+  "extDescription": {
+    "message": "Wandeln Sie jede Webseite oder Auswahl mit einem Klick in sauberes Markdown um — bereit für LLM-Chats, Wissensdatenbanken oder Notizen. Unterstützt auch x.com-Beiträge und Artikel.",
+    "description": "Beschreibung der Erweiterung"
+  },
+  "contextMenuCopyBodyAsMarkdown": {
+    "message": "Inhalt als Markdown kopieren",
+    "description": "Kontextmenü für Seiteninhalt"
+  },
+  "contextMenuCopySelectionAsMarkdown": {
+    "message": "Auswahl als Markdown kopieren",
+    "description": "Kontextmenü für Auswahl"
+  },
+  "toastCopiedSelectionAsMarkdown": {
+    "message": "Auswahl als Markdown kopiert",
+    "description": "Toast für kopierte Auswahl"
+  },
+  "toastCopiedBodyAsMarkdown": {
+    "message": "Inhalt als Markdown kopiert",
+    "description": "Toast für kopierten Inhalt"
+  },
+  "errorCopyFailedGeneric": {
+    "message": "Kopieren fehlgeschlagen",
+    "description": "Allgemeiner Kopierfehler"
+  },
+  "errorPostNotFound": {
+    "message": "Aktueller Beitrag nicht gefunden",
+    "description": "Beitrag konnte nicht gefunden werden"
+  },
+  "errorUnsupportedPostPage": {
+    "message": "Dies ist keine unterstützte Beitragsseite",
+    "description": "Nicht unterstützte Beitragsseite"
+  },
+  "errorCurrentPostBodyNotFound": {
+    "message": "Inhalt des aktuellen Beitrags nicht gefunden",
+    "description": "Beitragsinhalt nicht gefunden"
+  },
+  "errorUnsupportedArticlePage": {
+    "message": "Dies ist keine unterstützte Artikelseite",
+    "description": "Nicht unterstützte Artikelseite"
+  },
+  "errorArticleContainerNotFound": {
+    "message": "Artikelcontainer nicht gefunden",
+    "description": "Artikelcontainer nicht gefunden"
+  },
+  "errorArticleTitleNotFound": {
+    "message": "Artikeltitel nicht gefunden",
+    "description": "Artikeltitel nicht gefunden"
+  },
+  "errorUnsupportedPath": {
+    "message": "Seitenpfad wird nicht unterstützt",
+    "description": "Nicht unterstützter Seitenpfad"
+  },
+  "errorInvalidPostNode": {
+    "message": "Ungültiger Beitragsknoten",
+    "description": "Beitragsknoten ist ungültig"
+  },
+  "errorAuthorInfoNotFound": {
+    "message": "Autoreninformationen nicht gefunden",
+    "description": "Autoreninformationen nicht gefunden"
+  },
+  "errorPublishTimeNotFound": {
+    "message": "Veröffentlichungszeit nicht gefunden",
+    "description": "Veröffentlichungszeit nicht gefunden"
+  },
+  "errorPostLinkNotFound": {
+    "message": "Beitragslink nicht gefunden",
+    "description": "Beitragslink nicht gefunden"
+  },
+  "errorBodyNotFound": {
+    "message": "Textinhalt nicht gefunden",
+    "description": "Textinhalt nicht gefunden"
+  },
+  "errorInvalidArticleNode": {
+    "message": "Ungültiger Artikelknoten",
+    "description": "Artikelknoten ist ungültig"
+  },
+  "errorArticleBodyNotFound": {
+    "message": "Artikelinhalt nicht gefunden",
+    "description": "Artikelinhalt nicht gefunden"
+  },
+  "errorClipboardRetry": {
+    "message": "Kopieren fehlgeschlagen, bitte manuell erneut versuchen",
+    "description": "Fehler beim Schreiben in die Zwischenablage"
+  },
+  "errorRightClickPostFirst": {
+    "message": "Klicken Sie mit der rechten Maustaste in die Beitragskarte und versuchen Sie es erneut",
+    "description": "Keine Beitragskarte ausgewählt"
+  },
+  "errorEditableSelectionNotSupported": {
+    "message": "Die Auswahl befindet sich in einem bearbeitbaren Feld. Bitte wählen Sie stattdessen Seiteninhalt aus.",
+    "description": "Auswahl in bearbeitbarem Feld nicht unterstützt"
+  },
+  "errorNoValidSelection": {
+    "message": "Keine gültige Auswahl gefunden",
+    "description": "Keine gültige Auswahl"
+  },
+  "errorPageNotReadable": {
+    "message": "Diese Seite scheint kein lesbarer Artikel zu sein. Wählen Sie den Inhalt aus und versuchen Sie es erneut.",
+    "description": "Seite scheint kein lesbarer Artikel zu sein"
+  },
+  "errorPageInjectionBlocked": {
+    "message": "Diese Seite erlaubt keine Skriptinjektion. Versuchen Sie es auf einer normalen Webseite.",
+    "description": "Skriptinjektion blockiert"
+  },
+  "errorReadabilityUnavailable": {
+    "message": "Der Artikelextraktor wurde nicht geladen. Aktualisieren Sie die Seite und versuchen Sie es erneut.",
+    "description": "Readability konnte nicht geladen werden"
+  },
+  "markdownAuthorLine": {
+    "message": "Autor: $1",
+    "description": "Markdown-Autorzeile",
+    "placeholders": {
+      "value": {
+        "content": "$1",
+        "example": "Example Author (@example)"
+      }
+    }
+  },
+  "markdownTimeLine": {
+    "message": "Zeit: $1",
+    "description": "Markdown-Zeitzeile",
+    "placeholders": {
+      "value": {
+        "content": "$1",
+        "example": "2026-03-21 12:18:32"
+      }
+    }
+  },
+  "markdownLinkLine": {
+    "message": "Link: $1",
+    "description": "Markdown-Linkzeile",
+    "placeholders": {
+      "value": {
+        "content": "$1",
+        "example": "https://x.com/example/status/1"
+      }
+    }
+  },
+  "markdownSiteLine": {
+    "message": "Website: $1",
+    "description": "Markdown-Websitezeile",
+    "placeholders": {
+      "value": {
+        "content": "$1",
+        "example": "developer.chrome.com"
+      }
+    }
+  },
+  "markdownBodyLabel": {
+    "message": "Inhalt:",
+    "description": "Markdown-Inhaltsüberschrift"
+  },
+  "markdownQuoteSectionLabel": {
+    "message": "Zitierter Beitrag:",
+    "description": "Markdown-Zitatabschnitt"
+  },
+  "markdownQuotedImageSectionLabel": {
+    "message": "Zitierte Bilder:",
+    "description": "Markdown-Abschnitt für zitierte Bilder"
+  },
+  "markdownImageSectionLabel": {
+    "message": "Bilder:",
+    "description": "Markdown-Bildabschnitt"
+  },
+  "markdownImageLabel": {
+    "message": "Bild $1",
+    "description": "Markdown-Bildbezeichnung",
+    "placeholders": {
+      "index": {
+        "content": "$1",
+        "example": "1"
+      }
+    }
+  },
+  "markdownQuotedImageLabel": {
+    "message": "Zitiertes Bild $1",
+    "description": "Markdown-Bezeichnung für zitiertes Bild",
+    "placeholders": {
+      "index": {
+        "content": "$1",
+        "example": "1"
+      }
+    }
+  },
+  "unknownAuthor": {
+    "message": "Unbekannter Autor",
+    "description": "Platzhalter für unbekannten Autor"
+  }
+}

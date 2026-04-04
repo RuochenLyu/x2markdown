@@ -1,0 +1,194 @@
+{
+  "extName": {
+    "message": "X2Markdown",
+    "description": "擴充功能名稱"
+  },
+  "extDescription": {
+    "message": "一鍵將網頁內容轉為乾淨的 Markdown，直接貼進 LLM 對話、知識庫或筆記工具。x.com 額外支援貼文和長文匯出。",
+    "description": "擴充功能說明"
+  },
+  "contextMenuCopyBodyAsMarkdown": {
+    "message": "複製內文為 Markdown",
+    "description": "內文右鍵選單標題"
+  },
+  "contextMenuCopySelectionAsMarkdown": {
+    "message": "複製選取範圍為 Markdown",
+    "description": "選取範圍右鍵選單標題"
+  },
+  "toastCopiedSelectionAsMarkdown": {
+    "message": "已複製選取範圍為 Markdown",
+    "description": "選取範圍複製成功提示"
+  },
+  "toastCopiedBodyAsMarkdown": {
+    "message": "已複製內文為 Markdown",
+    "description": "內文複製成功提示"
+  },
+  "errorCopyFailedGeneric": {
+    "message": "複製失敗",
+    "description": "一般複製失敗提示"
+  },
+  "errorPostNotFound": {
+    "message": "找不到目前的貼文",
+    "description": "貼文不存在或無法定位"
+  },
+  "errorUnsupportedPostPage": {
+    "message": "目前不是支援的貼文頁面",
+    "description": "不支援的貼文頁面"
+  },
+  "errorCurrentPostBodyNotFound": {
+    "message": "找不到目前的貼文內文",
+    "description": "貼文內文不存在"
+  },
+  "errorUnsupportedArticlePage": {
+    "message": "目前不是支援的文章頁面",
+    "description": "不支援的文章頁面"
+  },
+  "errorArticleContainerNotFound": {
+    "message": "找不到文章容器",
+    "description": "文章容器不存在"
+  },
+  "errorArticleTitleNotFound": {
+    "message": "找不到文章標題",
+    "description": "文章標題不存在"
+  },
+  "errorUnsupportedPath": {
+    "message": "頁面路徑不受支援",
+    "description": "頁面路徑不符合支援規則"
+  },
+  "errorInvalidPostNode": {
+    "message": "貼文節點無效",
+    "description": "貼文節點不是有效元素"
+  },
+  "errorAuthorInfoNotFound": {
+    "message": "找不到作者資訊",
+    "description": "作者資訊不存在"
+  },
+  "errorPublishTimeNotFound": {
+    "message": "找不到發布時間",
+    "description": "發布時間不存在"
+  },
+  "errorPostLinkNotFound": {
+    "message": "找不到貼文連結",
+    "description": "貼文連結不存在"
+  },
+  "errorBodyNotFound": {
+    "message": "找不到內文內容",
+    "description": "內文不存在"
+  },
+  "errorInvalidArticleNode": {
+    "message": "文章節點無效",
+    "description": "文章節點不是有效元素"
+  },
+  "errorArticleBodyNotFound": {
+    "message": "找不到文章內文",
+    "description": "文章內文不存在"
+  },
+  "errorClipboardRetry": {
+    "message": "複製失敗，請手動重試",
+    "description": "剪貼簿寫入失敗提示"
+  },
+  "errorRightClickPostFirst": {
+    "message": "請在目標貼文卡片內按右鍵後重試",
+    "description": "X 時間軸未命中貼文卡片"
+  },
+  "errorEditableSelectionNotSupported": {
+    "message": "目前選取範圍位於輸入區域，請改為選取頁面內容後重試",
+    "description": "輸入區域選取不支援 DOM 擷取"
+  },
+  "errorNoValidSelection": {
+    "message": "未偵測到有效選取範圍",
+    "description": "選取模式下未找到有效選取範圍"
+  },
+  "errorPageNotReadable": {
+    "message": "未辨識為文章，請選取內容後重試",
+    "description": "頁面不像可擷取的文章"
+  },
+  "errorPageInjectionBlocked": {
+    "message": "此頁面不允許注入指令碼，請改到一般網頁後重試",
+    "description": "頁面不支援按需注入"
+  },
+  "errorReadabilityUnavailable": {
+    "message": "內文擷取器未載入，請重新整理頁面後重試",
+    "description": "Readability 未成功載入"
+  },
+  "markdownAuthorLine": {
+    "message": "作者: $1",
+    "description": "Markdown 作者行",
+    "placeholders": {
+      "value": {
+        "content": "$1",
+        "example": "Example Author (@example)"
+      }
+    }
+  },
+  "markdownTimeLine": {
+    "message": "時間: $1",
+    "description": "Markdown 時間行",
+    "placeholders": {
+      "value": {
+        "content": "$1",
+        "example": "2026-03-21 12:18:32"
+      }
+    }
+  },
+  "markdownLinkLine": {
+    "message": "連結: $1",
+    "description": "Markdown 連結行",
+    "placeholders": {
+      "value": {
+        "content": "$1",
+        "example": "https://x.com/example/status/1"
+      }
+    }
+  },
+  "markdownSiteLine": {
+    "message": "站點: $1",
+    "description": "Markdown 站點行",
+    "placeholders": {
+      "value": {
+        "content": "$1",
+        "example": "developer.chrome.com"
+      }
+    }
+  },
+  "markdownBodyLabel": {
+    "message": "內文:",
+    "description": "Markdown 內文標題"
+  },
+  "markdownQuoteSectionLabel": {
+    "message": "引用貼文:",
+    "description": "Markdown 引用區標題"
+  },
+  "markdownQuotedImageSectionLabel": {
+    "message": "引用圖片:",
+    "description": "Markdown 引用圖片區標題"
+  },
+  "markdownImageSectionLabel": {
+    "message": "圖片:",
+    "description": "Markdown 圖片區標題"
+  },
+  "markdownImageLabel": {
+    "message": "圖片 $1",
+    "description": "Markdown 圖片標籤",
+    "placeholders": {
+      "index": {
+        "content": "$1",
+        "example": "1"
+      }
+    }
+  },
+  "markdownQuotedImageLabel": {
+    "message": "引用圖片 $1",
+    "description": "Markdown 引用圖片標籤",
+    "placeholders": {
+      "index": {
+        "content": "$1",
+        "example": "1"
+      }
+    }
+  },
+  "unknownAuthor": {
+    "message": "未知作者",
+    "description": "未知作者佔位文案"
+  }
+}
