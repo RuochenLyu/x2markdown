@@ -1,5 +1,8 @@
 .DS_Store
 Thumbs.db
 *.log
+*.zip
 .idea/
 .vscode/
+dist/
+.playwright-cli

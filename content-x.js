@@ -1024,27 +1024,6 @@
     });
   }
 
-  function extractArticleImages(root, titleElement) {
-    const titleBottom = titleElement.getBoundingClientRect().bottom;
-    const images = Array.from(root.querySelectorAll("img[src]")).filter((image) => {
-      if (!(image instanceof HTMLImageElement) || !isVisible(image)) {
-        return false;
-      }
-
-      if (!image.src.includes("pbs.twimg.com/media")) {
-        return false;
-      }
-
-      if (image.closest(SELECTORS.userName) || image.closest("[data-testid='UserAvatar-Container']")) {
-        return false;
-      }
-
-      return image.getBoundingClientRect().top >= titleBottom;
-    });
-
-    return unique(images.map((image) => normalizeMediaUrl(image.src)).filter(Boolean));
-  }
-
   function extractStatusTime(article, statusId) {
     const timeElements = Array.from(article.querySelectorAll("time[datetime]")).filter((element) => {
       if (!(element instanceof HTMLElement) || !isVisible(element)) {
@@ -1062,40 +1041,6 @@
       }) || null;
 
     return buildTimeInfo(matchingElement || timeElements[0] || null);
-  }
-
-  function extractArticleTime(root, titleElement) {
-    const titleRect = titleElement.getBoundingClientRect();
-    const timeElements = Array.from(root.querySelectorAll("time[datetime]")).filter((element) => {
-      if (!(element instanceof HTMLElement) || !isVisible(element)) {
-        return false;
-      }
-
-      if (element.closest("nav, footer, aside, [role='menu'], [role='dialog']")) {
-        return false;
-      }
-
-      return true;
-    });
-
-    const scored = timeElements
-      .map((element) => {
-        const rect = element.getBoundingClientRect();
-        let score = Math.abs(rect.top - titleRect.top);
-
-        if (rect.top > titleRect.bottom + 240) {
-          score += 500;
-        }
-
-        if (element.closest(SELECTORS.article)) {
-          score += 160;
-        }
-
-        return { element, score };
-      })
-      .sort((left, right) => left.score - right.score);
-
-    return buildTimeInfo(scored[0] ? scored[0].element : null);
   }
 
   function buildTimeInfo(element) {
