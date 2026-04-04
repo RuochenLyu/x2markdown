@@ -6,7 +6,7 @@ English | [中文](README.zh-CN.md)
   <img src="https://storage.googleapis.com/web-dev-uploads/image/WlD8wC6g8khYWPJUsQceQkhXSlv1/iNEddTyWiMfLSwFD6qGq.png" alt="Available in the Chrome Web Store" width="248">
 </a>
 
-`x2markdown` is a Chrome extension for converting visible webpage content into Markdown. It adds a "Copy as Markdown" entry to the browser's right-click menu, turning article bodies or selections into Markdown text ready to paste into AI conversations. On `x.com`, it also provides dedicated export support for posts and longform articles.
+`x2markdown` is a Chrome extension that converts visible webpage content into clean Markdown with one right-click — ready to paste into LLM chats, append to personal knowledge bases, or save as `.md` reference files. On `x.com`, it additionally provides dedicated export for posts and longform articles.
 
 This project is primarily for showcase and personal use. It is open-sourced under the MIT license and does not accept external code contributions by default.
 
@@ -14,11 +14,13 @@ This project is primarily for showcase and personal use. It is open-sourced unde
 
 ## What Problem Does It Solve
 
+LLMs work best when they receive well-structured text. But getting content from a browser into that form is surprisingly manual:
+
 - Dropping a link into an AI chat often fails to capture the full content or context.
-- Copying visible webpage content usually requires manually organizing titles, links, body text, and image URLs.
+- Copying visible webpage content loses structure — titles, links, body text, and image URLs all need manual cleanup.
 - On `x.com`, blogs, documentation sites, forums, and issue pages, there is frequently content that is "visible to me but unreadable by AI."
 
-`x2markdown` aims to reduce this to a single click.
+Whether you are pasting into a chat window, building an LLM-friendly knowledge base, or archiving web research as Markdown, `x2markdown` reduces the process to a single right-click.
 
 ## Features
 

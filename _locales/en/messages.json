@@ -4,7 +4,7 @@
     "description": "Extension name"
   },
   "extDescription": {
-    "message": "Right-click the current page article or selection to copy it as Markdown, with extra support for x.com posts and longform pages.",
+    "message": "One-click convert any webpage or selection to clean Markdown — ready for LLM chats, knowledge bases, or note-taking. Extra support for x.com posts and articles.",
     "description": "Extension description"
   },
   "contextMenuCopyBodyAsMarkdown": {

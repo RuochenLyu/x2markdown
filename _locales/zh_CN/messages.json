@@ -4,7 +4,7 @@
     "description": "扩展名称"
   },
   "extDescription": {
-    "message": "右键把当前网页文章或选区复制为 Markdown，x.com 额外支持帖子和长文导出。",
+    "message": "一键把网页内容转成干净的 Markdown，直接粘进 LLM 对话、知识库或笔记工具。x.com 额外支持帖子和长文导出。",
     "description": "扩展描述"
   },
   "contextMenuCopyBodyAsMarkdown": {

@@ -6,7 +6,7 @@
   <img src="https://storage.googleapis.com/web-dev-uploads/image/WlD8wC6g8khYWPJUsQceQkhXSlv1/iNEddTyWiMfLSwFD6qGq.png" alt="Available in the Chrome Web Store" width="248">
 </a>
 
-`x2markdown` 是一个面向"当前可见网页内容"的 Chrome 浏览器插件。它会在浏览器右键菜单中增加一个"复制为 Markdown"入口，用来把当前文章正文或选区快速整理成适合粘贴到 AI 对话中的 Markdown 文本；在 `x.com` 上则额外保留帖子和长文的专用导出能力。
+`x2markdown` 是一个 Chrome 浏览器插件，右键一次就能把当前网页内容转成干净的 Markdown——可以直接粘进 LLM 对话、存进个人知识库、或保存为 `.md` 参考文件。在 `x.com` 上则额外保留帖子和长文的专用导出能力。
 
 这个项目以展示和自用为主，使用 MIT 协议开源，默认不接收外部代码贡献。
 
@@ -14,11 +14,13 @@
 
 ## 解决什么问题
 
+LLM 处理结构化文本效果最好，但从浏览器里拿到这种格式却意外地麻烦：
+
 - 直接把链接丢给 AI，经常拿不到正文或上下文不完整。
-- 复制网页可见内容时，标题、链接、正文和图片链接通常需要手动整理。
+- 复制网页可见内容时，标题、链接、正文和图片链接会丢失结构，需要手动整理。
 - `x.com`、博客、文档页、论坛帖和 issue 页面都可能出现"我能看见，但 AI 读不到"的情况。
 
-`x2markdown` 的目标是把这一步缩短成一次点击。
+无论是粘贴到对话窗口、构建 LLM 友好的知识库、还是把网页研究归档为 Markdown，`x2markdown` 都可以把这个过程缩短成一次右键。
 
 ## 功能范围
 
