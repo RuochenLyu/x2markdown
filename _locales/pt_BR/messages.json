@@ -4,7 +4,7 @@
     "description": "Nome da extensão"
   },
   "extDescription": {
-    "message": "Converta qualquer página ou seleção em Markdown limpo com um clique — pronto para chats com LLM, bases de conhecimento ou anotações. Suporte extra para posts e artigos do x.com.",
+    "message": "Converta qualquer página em Markdown limpo com um clique — para chats LLM, bases de conhecimento e notas. Suporte a x.com.",
     "description": "Descrição da extensão"
   },
   "contextMenuCopyBodyAsMarkdown": {

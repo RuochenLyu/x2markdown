@@ -4,7 +4,7 @@
     "description": "Extension name"
   },
   "extDescription": {
-    "message": "One-click convert any webpage or selection to clean Markdown — ready for LLM chats, knowledge bases, or note-taking. Extra support for x.com posts and articles.",
+    "message": "One-click convert any webpage to clean Markdown — for LLM chats, knowledge bases & notes. Supports x.com posts.",
     "description": "Extension description"
   },
   "contextMenuCopyBodyAsMarkdown": {

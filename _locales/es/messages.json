@@ -4,7 +4,7 @@
     "description": "Nombre de la extensión"
   },
   "extDescription": {
-    "message": "Convierte cualquier página web o selección en Markdown limpio con un clic — listo para chats con LLM, bases de conocimiento o notas. Compatible con publicaciones y artículos de x.com.",
+    "message": "Convierte cualquier página en Markdown limpio con un clic — para chats LLM, bases de conocimiento y notas. Compatible con x.com.",
     "description": "Descripción de la extensión"
   },
   "contextMenuCopyBodyAsMarkdown": {

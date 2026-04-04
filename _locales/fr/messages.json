@@ -4,7 +4,7 @@
     "description": "Nom de l'extension"
   },
   "extDescription": {
-    "message": "Convertissez n'importe quelle page web ou sélection en Markdown propre en un clic — prêt pour les chats LLM, bases de connaissances ou prises de notes. Compatible avec les publications et articles x.com.",
+    "message": "Convertissez toute page web en Markdown propre en un clic — pour chats LLM, bases de connaissances et notes. Compatible x.com.",
     "description": "Description de l'extension"
   },
   "contextMenuCopyBodyAsMarkdown": {

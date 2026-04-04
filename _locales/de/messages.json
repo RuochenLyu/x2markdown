@@ -4,7 +4,7 @@
     "description": "Name der Erweiterung"
   },
   "extDescription": {
-    "message": "Wandeln Sie jede Webseite oder Auswahl mit einem Klick in sauberes Markdown um — bereit für LLM-Chats, Wissensdatenbanken oder Notizen. Unterstützt auch x.com-Beiträge und Artikel.",
+    "message": "Jede Webseite per Klick in sauberes Markdown umwandeln — für LLM-Chats, Wissensbasen & Notizen. x.com-Posts inklusive.",
     "description": "Beschreibung der Erweiterung"
   },
   "contextMenuCopyBodyAsMarkdown": {
