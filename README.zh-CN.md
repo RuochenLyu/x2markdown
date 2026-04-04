@@ -3,7 +3,7 @@
 [English](README.md) | 中文
 
 <a href="https://chromewebstore.google.com/detail/x2markdown/acljfllclafamkhdjjkldogcadfbigmo">
-  <img src="https://storage.googleapis.com/web-dev-uploads/image/WlD8wC6g8khYWPJUsQceQkhXSlv1/iNEddTyWiMfLSwFD6qGq.png" alt="Available in the Chrome Web Store" width="248">
+  <img src="https://raw.githubusercontent.com/GoogleChrome/webstore-docs/master/images/ChromeWebStore_BadgeWBorder_v2_206x58.png" alt="Available in the Chrome Web Store">
 </a>
 
 `x2markdown` 是一个 Chrome 浏览器插件，右键一次就能把当前网页内容转成干净的 Markdown——可以直接粘进 LLM 对话、存进个人知识库、或保存为 `.md` 参考文件。在 `x.com` 上则额外保留帖子和长文的专用导出能力。

@@ -1,5 +1,29 @@
 # 输出示例
 
+## 通用网页
+
+```md
+# Understanding React Server Components
+
+Site: react.dev
+Author: React Team
+Time: 2026-04-01 10:00:00
+Link: https://react.dev/blog/2026/04/01/react-server-components
+
+Body:
+React Server Components let you write UI that can be rendered and optionally cached on the server.
+
+In Next.js, the rendering work is further split by route segments to enable streaming and partial rendering.
+
+There are three different server rendering strategies:
+- Static Rendering
+- Dynamic Rendering
+- Streaming
+
+Images:
+- [Image 1](https://react.dev/images/hero.png)
+```
+
 ## 普通 post
 
 ```md
