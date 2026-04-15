@@ -36,6 +36,7 @@ Whether you are pasting into a chat window, building an LLM-friendly knowledge b
   - Body
   - Quoted post (if present)
   - Image links
+- On `status` detail pages, if the main post is followed by consecutive self-replies at the top, the extension exports the whole thread in order.
 - Copying an X Article or longform reading view additionally outputs the title.
 - Generic webpage mode supports title, site name, author, time, body, and image links; missing fields are omitted.
 - Images are output as links, not as embedded Markdown images.
@@ -49,7 +50,7 @@ Whether you are pasting into a chat window, building an LLM-friendly knowledge b
 
 ## Non-Goals
 
-- Does not export entire X threads.
+- Does not export the full conversation page or other users' reply threads.
 - Does not capture video, GIF, poll results, or comment sections.
 - Does not attempt to bypass login walls, paywalls, or unrendered content.
 - Does not cover `twitter.com` or `mobile.x.com`.
@@ -77,6 +78,7 @@ For local development or debugging:
 Extra rules for `x.com`:
 
 - On detail pages and longform pages, right-click anywhere to copy.
+- On `status` detail pages, it first tries to export the full thread defined as the main post plus the top consecutive self-replies.
 - In feeds, lists, and search results, right-click inside the target post card.
 
 ## Output Formats
@@ -119,7 +121,7 @@ Images:
 - [Image 1](https://example.com/hero.png)
 ```
 
-See [docs/examples/post.md](./docs/examples/post.md) for X Article output examples.
+See [docs/examples/post.md](./docs/examples/post.md) for X post, thread, and X Article output examples.
 
 ## Implementation Overview
 
@@ -135,6 +137,7 @@ See [docs/examples/post.md](./docs/examples/post.md) for X Article output exampl
   - Other pages inject `shared.js + readability.js + content-generic.js` on demand.
 - Generic mode prioritizes selection; only attempts Readability for full-page extraction when there is no selection.
 - When a truncated X post is hit in the timeline, the content script clicks `tweet-text-show-more-link` inside the target `article[data-testid="tweet"]` and waits for the text to expand before extracting.
+- On `status` detail pages, it starts from the main post and collects only the top consecutive posts from the same author; it stops at the first visible reply from someone else.
 - X extraction logic relies primarily on visible DOM and semantic nodes:
   - `article[data-testid="tweet"]`
   - `time[datetime]`
@@ -180,7 +183,7 @@ x2markdown/
 
 - X's DOM structure changes frequently; dedicated extraction logic may break.
 - Generic webpage mode is biased toward "article pages" rather than aggregate pages; homepages, navigation pages, and product pages work better with selection mode.
-- Only the current post / article / right-clicked post card is exported; no thread merging.
+- Full thread export on `status` pages only covers the main post plus the top consecutive self-replies, not the author's later scattered replies in the comment section.
 - Regular X posts have no native title, so no title field is output.
 - Some longform articles render directly as a reading view on `status` pages and are exported in longform format.
 - Timeline posts rely on the most recently right-clicked visible card; if no post is hit, the extension reports failure.

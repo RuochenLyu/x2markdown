@@ -698,60 +698,127 @@
   }
 
   function extractInlineMarkdown(node) {
-    const parts = [];
-
-    // X-specific inline extraction still runs on the live page DOM.
-    // It keeps relying on visibility checks to avoid hidden UI fragments.
-    for (const child of node.childNodes) {
-      if (child.nodeType === Node.TEXT_NODE) {
-        parts.push(child.textContent || "");
-        continue;
-      }
-
-      if (!(child instanceof Element) || !isVisible(child)) {
-        continue;
-      }
-
-      if (child.tagName === "BR") {
-        parts.push("\n");
-        continue;
-      }
-
-      if (child.tagName === "IMG") {
-        const alt = normalizeText(child.getAttribute("alt"));
-        if (alt && alt.toLowerCase() !== "image") {
-          parts.push(alt);
-        }
-        continue;
-      }
-
-      if (child instanceof HTMLAnchorElement) {
-        const href = toAbsoluteUrl(child.getAttribute("href"));
-        const text = normalizeMarkdownBlock(extractInlineMarkdown(child) || child.textContent || "");
-
-        if (!href) {
-          parts.push(text);
-          continue;
-        }
-
-        if (!text) {
-          parts.push(href);
-          continue;
-        }
-
-        if (looksLikeAbsoluteUrl(text)) {
-          parts.push(href);
-          continue;
-        }
-
-        parts.push(`[${escapeMarkdownText(text)}](${href})`);
-        continue;
-      }
-
-      parts.push(extractInlineMarkdown(child));
+    if (!(node instanceof Node)) {
+      return "";
     }
 
-    return normalizeInlineText(parts.join(""));
+    const content =
+      node.nodeType === Node.TEXT_NODE
+        ? node.textContent || ""
+        : renderLiveInlineChildren(node, createLiveInlineStyleState());
+
+    return normalizeInlineText(content);
+  }
+
+  function renderLiveInlineChildren(node, parentStyleState) {
+    if (!node || !node.childNodes) {
+      return "";
+    }
+
+    return Array.from(node.childNodes)
+      .map((child) => renderLiveInlineNode(child, parentStyleState))
+      .join("");
+  }
+
+  function renderLiveInlineNode(node, parentStyleState) {
+    if (node.nodeType === Node.TEXT_NODE) {
+      return node.textContent || "";
+    }
+
+    if (!(node instanceof Element) || !isVisible(node)) {
+      return "";
+    }
+
+    if (node.tagName === "BR") {
+      return "\n";
+    }
+
+    if (node.tagName === "IMG") {
+      const alt = normalizeText(node.getAttribute("alt"));
+      return alt && alt.toLowerCase() !== "image" ? alt : "";
+    }
+
+    const currentStyleState = getLiveInlineStyleState(node, parentStyleState);
+
+    if (node instanceof HTMLAnchorElement) {
+      const href = toAbsoluteUrl(node.getAttribute("href"));
+      const text = normalizeMarkdownBlock(renderLiveInlineChildren(node, currentStyleState) || node.textContent || "");
+      let content = text;
+
+      if (href) {
+        if (!text || looksLikeAbsoluteUrl(text)) {
+          content = href;
+        } else {
+          content = `[${escapeMarkdownText(text)}](${href})`;
+        }
+      }
+
+      return applyLiveInlineStyleState(content, parentStyleState, currentStyleState);
+    }
+
+    if (node.tagName === "CODE" && node.parentElement?.tagName !== "PRE") {
+      const text = normalizeInlineText(node.textContent || "");
+      const content = text ? `\`${text.replace(/`/g, "\\`")}\`` : "";
+      return applyLiveInlineStyleState(content, parentStyleState, currentStyleState);
+    }
+
+    const content = renderLiveInlineChildren(node, currentStyleState);
+    return applyLiveInlineStyleState(content, parentStyleState, currentStyleState);
+  }
+
+  function createLiveInlineStyleState(overrides = {}) {
+    return {
+      bold: Boolean(overrides.bold),
+      italic: Boolean(overrides.italic),
+      strike: Boolean(overrides.strike)
+    };
+  }
+
+  function getLiveInlineStyleState(element, parentStyleState) {
+    const currentStyleState = createLiveInlineStyleState(parentStyleState);
+
+    if (element instanceof HTMLElement) {
+      const style = window.getComputedStyle(element);
+      currentStyleState.bold = Number(style.fontWeight) >= 600;
+      currentStyleState.italic = style.fontStyle.includes("italic");
+      currentStyleState.strike = style.textDecorationLine.includes("line-through");
+    }
+
+    if (element.tagName === "STRONG" || element.tagName === "B") {
+      currentStyleState.bold = true;
+    }
+
+    if (element.tagName === "EM" || element.tagName === "I") {
+      currentStyleState.italic = true;
+    }
+
+    if (element.tagName === "DEL" || element.tagName === "S" || element.tagName === "STRIKE") {
+      currentStyleState.strike = true;
+    }
+
+    return currentStyleState;
+  }
+
+  function applyLiveInlineStyleState(content, parentStyleState, currentStyleState) {
+    if (!content || !normalizeText(content)) {
+      return content;
+    }
+
+    let formatted = content;
+
+    if (currentStyleState.bold && !parentStyleState.bold) {
+      formatted = `**${formatted}**`;
+    }
+
+    if (currentStyleState.italic && !parentStyleState.italic) {
+      formatted = `*${formatted}*`;
+    }
+
+    if (currentStyleState.strike && !parentStyleState.strike) {
+      formatted = `~~${formatted}~~`;
+    }
+
+    return formatted;
   }
 
   window.__x2markdownShared = {

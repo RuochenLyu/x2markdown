@@ -147,12 +147,29 @@
     const article = await expandTweetTextIfNeeded(getStatusPageArticle(), {
       resolveArticle: getStatusPageArticle
     });
-    const payload = extractPostData(article);
+    const posts = await extractStatusThreadPosts(article);
+
+    if (posts.length <= 1) {
+      return {
+        ...posts[0],
+        url: cleanPageUrl(location.href)
+      };
+    }
 
     return {
-      ...payload,
-      url: cleanPageUrl(location.href)
+      kind: "thread",
+      url: cleanPageUrl(location.href),
+      posts
     };
+  }
+
+  async function extractStatusThreadPosts(mainArticle) {
+    const articles = await collectStatusThreadArticles(mainArticle);
+    return articles.map((article, index) => {
+      return extractPostData(article, {
+        allowMediaOnly: index > 0
+      });
+    });
   }
 
   async function extractCurrentArticlePage() {
@@ -354,6 +371,123 @@
     return article;
   }
 
+  async function collectStatusThreadArticles(mainArticle) {
+    const mainStatusId = extractPathId(location.pathname, "status");
+    const mainAuthor = extractAuthor(mainArticle);
+    const mainHandle = mainAuthor.handle;
+    const collected = [mainArticle];
+    const seenStatusIds = new Set([mainStatusId].filter(Boolean));
+
+    if (!mainHandle) {
+      return collected;
+    }
+
+    const conversationArticles = getStatusConversationArticles();
+    const startIndex = findStatusThreadStartIndex(conversationArticles, mainArticle, mainStatusId);
+    if (startIndex < 0) {
+      return collected;
+    }
+
+    for (let index = startIndex + 1; index < conversationArticles.length; index += 1) {
+      const candidate = conversationArticles[index];
+      const decision = classifyStatusThreadCandidate(candidate, mainHandle, seenStatusIds);
+
+      if (decision.action === "skip") {
+        continue;
+      }
+
+      if (decision.action === "stop") {
+        break;
+      }
+
+      const expandedArticle = await expandTweetTextIfNeeded(candidate, {
+        resolveArticle: () => resolveStatusConversationArticle(decision.statusId, decision.statusUrl)
+      });
+      const currentArticle = resolveStatusConversationArticle(decision.statusId, decision.statusUrl) || expandedArticle;
+
+      collected.push(currentArticle);
+      if (decision.statusId) {
+        seenStatusIds.add(decision.statusId);
+      }
+    }
+
+    return collected;
+  }
+
+  function getStatusConversationArticles() {
+    const main = document.querySelector("main");
+    if (!(main instanceof HTMLElement)) {
+      return [];
+    }
+
+    return Array.from(main.querySelectorAll(SELECTORS.article)).filter((article) => {
+      if (!(article instanceof HTMLElement) || !isVisible(article)) {
+        return false;
+      }
+
+      return !(article.parentElement?.closest(SELECTORS.article) instanceof HTMLElement);
+    });
+  }
+
+  function findStatusThreadStartIndex(conversationArticles, mainArticle, mainStatusId) {
+    const directIndex = conversationArticles.findIndex((article) => article === mainArticle);
+    if (directIndex >= 0) {
+      return directIndex;
+    }
+
+    if (!mainStatusId) {
+      return -1;
+    }
+
+    return conversationArticles.findIndex((article) => articleHasStatusId(article, mainStatusId));
+  }
+
+  function classifyStatusThreadCandidate(article, mainHandle, seenStatusIds) {
+    if (!(article instanceof HTMLElement) || !isVisible(article)) {
+      return { action: "skip", statusId: "", statusUrl: "" };
+    }
+
+    if (article.closest('[data-testid="placementTracking"]')) {
+      return { action: "skip", statusId: "", statusUrl: "" };
+    }
+
+    const statusId = extractStatusIdFromArticle(article);
+    const statusUrl = extractPrimaryStatusUrl(article);
+
+    if (!statusId || !statusUrl || seenStatusIds.has(statusId)) {
+      return { action: "skip", statusId, statusUrl };
+    }
+
+    const author = extractAuthor(article);
+    if (!author.handle) {
+      return { action: "skip", statusId, statusUrl };
+    }
+
+    if (author.handle !== mainHandle) {
+      return { action: "stop", statusId, statusUrl };
+    }
+
+    return { action: "collect", statusId, statusUrl };
+  }
+
+  function resolveStatusConversationArticle(statusId, statusUrl = "") {
+    const conversationArticles = getStatusConversationArticles();
+
+    if (statusId) {
+      const articleById = conversationArticles.find((article) => articleHasStatusId(article, statusId));
+      if (articleById) {
+        return articleById;
+      }
+    }
+
+    if (statusUrl) {
+      const cleanStatusUrl = cleanPageUrl(statusUrl);
+      return conversationArticles.find((article) => articleHasStatusUrl(article, cleanStatusUrl)) || null;
+    }
+
+    return null;
+  }
+
   function articleHasStatusId(article, statusId) {
     const statusPattern = new RegExp(`https://x\\.com/[^/]+/status/${statusId}(?:[/?#]|$)`);
     return Array.from(article.querySelectorAll("a[href]"))
@@ -423,13 +557,16 @@
     return segments[2] || "";
   }
 
-  function extractPostData(article) {
+  function extractPostData(article, options = {}) {
+    const { allowMediaOnly = false } = options;
+
     if (!(article instanceof HTMLElement)) {
       throw new Error(t("errorInvalidPostNode", undefined, "Invalid post node"));
     }
 
-    const statusId =
-      getSupportedPageType(location.pathname) === "status" ? extractPathId(location.pathname, "status") : extractStatusIdFromArticle(article);
+    const currentStatusId = getSupportedPageType(location.pathname) === "status" ? extractPathId(location.pathname, "status") : "";
+    const articleStatusId = extractStatusIdFromArticle(article);
+    const statusId = currentStatusId && articleHasStatusId(article, currentStatusId) ? currentStatusId : articleStatusId;
     const author = extractAuthor(article);
     const timeInfo = extractStatusTime(article, statusId);
     const timeElement = timeInfo.element;
@@ -456,7 +593,7 @@
       throw new Error(t("errorPostLinkNotFound", undefined, "Post link not found"));
     }
 
-    if (!body) {
+    if (!body && !(allowMediaOnly && (images.length > 0 || quote))) {
       throw new Error(t("errorBodyNotFound", undefined, "Body content not found"));
     }
 
@@ -662,7 +799,7 @@
   function extractPostImages(root, options = {}) {
     const { scopeArticle = root.closest ? root.closest(SELECTORS.article) : null, excludeContainer = null } = options;
     const images = Array.from(root.querySelectorAll('a[href*="/photo/"] img[src], img[src*="pbs.twimg.com/media"]')).filter((image) => {
-      if (!(image instanceof HTMLImageElement) || !isVisible(image)) {
+      if (!(image instanceof HTMLImageElement) || !isRenderableXMediaImage(image)) {
         return false;
       }
 
@@ -683,6 +820,37 @@
     });
 
     return unique(images.map((image) => normalizeMediaUrl(image.src)).filter(Boolean));
+  }
+
+  function isRenderableXMediaImage(image) {
+    if (!(image instanceof HTMLImageElement)) {
+      return false;
+    }
+
+    const source = image.currentSrc || image.src || image.getAttribute("src") || "";
+    if (!source.includes("pbs.twimg.com/media")) {
+      return false;
+    }
+
+    const rect = image.getBoundingClientRect();
+    if (rect.width <= 0 || rect.height <= 0) {
+      return false;
+    }
+
+    const style = window.getComputedStyle(image);
+    if (style.display === "none" || style.visibility === "hidden") {
+      return false;
+    }
+
+    const container = image.closest('a[href*="/photo/"], [data-testid="tweetPhoto"]') || image.parentElement;
+    if (container instanceof HTMLElement) {
+      const containerStyle = window.getComputedStyle(container);
+      if (containerStyle.display === "none" || containerStyle.visibility === "hidden" || containerStyle.opacity === "0") {
+        return false;
+      }
+    }
+
+    return true;
   }
 
   function buildLongformBody(root, titleElement) {
@@ -795,7 +963,7 @@
     const containers = Array.from(root.querySelectorAll('a[href*="/media/"], img[src]'));
 
     containers.forEach((node) => {
-      if (!(node instanceof HTMLElement) || !isVisible(node)) {
+      if (!(node instanceof HTMLElement) || !isRenderableLongformMediaNode(node)) {
         return;
       }
 
@@ -816,6 +984,18 @@
     });
 
     return unique(urls);
+  }
+
+  function isRenderableLongformMediaNode(node) {
+    if (!(node instanceof HTMLElement)) {
+      return false;
+    }
+
+    if (node instanceof HTMLImageElement) {
+      return isRenderableXMediaImage(node);
+    }
+
+    return isVisible(node);
   }
 
   function buildArticleBody(root, titleElement) {
@@ -1060,6 +1240,35 @@
   }
 
   function buildMarkdown(payload) {
+    if (payload.kind === "thread" && Array.isArray(payload.posts)) {
+      return buildThreadMarkdown(payload);
+    }
+
+    return buildSinglePayloadMarkdown(payload);
+  }
+
+  function buildThreadMarkdown(payload) {
+    const posts = Array.isArray(payload.posts) ? payload.posts.filter(Boolean) : [];
+    const firstPost = posts[0];
+    if (!firstPost) {
+      return "";
+    }
+
+    const lines = [];
+    const authorText = formatAuthor(firstPost.author) || t("unknownAuthor", undefined, "Unknown author");
+    lines.push(t("markdownAuthorLine", authorText, `Author: ${authorText}`));
+
+    if (firstPost.time) {
+      lines.push(t("markdownTimeLine", firstPost.time, `Time: ${firstPost.time}`));
+    }
+
+    lines.push(t("markdownLinkLine", payload.url || firstPost.url, `Link: ${payload.url || firstPost.url}`));
+    lines.push("", t("markdownBodyLabel", undefined, "Body:"), renderThreadBody(posts));
+
+    return lines.join("\n").trim();
+  }
+
+  function buildSinglePayloadMarkdown(payload) {
     const lines = [];
     const images = Array.isArray(payload.images) ? payload.images : [];
     const quote = payload.quote && payload.quote.body ? payload.quote : null;
@@ -1081,6 +1290,66 @@
       lines.push("", t("markdownQuoteSectionLabel", undefined, "Quoted Post:"));
       const quotedAuthorText = formatAuthor(quote.author) || t("unknownAuthor", undefined, "Unknown author");
       lines.push(t("markdownAuthorLine", quotedAuthorText, `Author: ${quotedAuthorText}`));
+
+      if (quote.time) {
+        lines.push(t("markdownTimeLine", quote.time, `Time: ${quote.time}`));
+      }
+
+      if (quote.url) {
+        lines.push(t("markdownLinkLine", quote.url, `Link: ${quote.url}`));
+      }
+
+      lines.push(t("markdownBodyLabel", undefined, "Body:"));
+      lines.push(
+        quote.body
+          .split("\n")
+          .map((line) => `> ${line}`)
+          .join("\n")
+      );
+
+      if (quote.images.length > 0) {
+        lines.push("", t("markdownQuotedImageSectionLabel", undefined, "Quoted Images:"));
+        quote.images.forEach((imageUrl, index) => {
+          lines.push(`- [${t("markdownQuotedImageLabel", String(index + 1), `Quoted Image ${index + 1}`)}](${imageUrl})`);
+        });
+      }
+    }
+
+    if (images.length > 0) {
+      lines.push("", t("markdownImageSectionLabel", undefined, "Images:"));
+      images.forEach((imageUrl, index) => {
+        lines.push(`- [${t("markdownImageLabel", String(index + 1), `Image ${index + 1}`)}](${imageUrl})`);
+      });
+    }
+
+    return lines.join("\n").trim();
+  }
+
+  function renderThreadBody(posts) {
+    return posts
+      .map((post) => renderThreadPost(post))
+      .filter(Boolean)
+      .join("\n\n---\n\n")
+      .trim();
+  }
+
+  function renderThreadPost(post) {
+    const quote = post && post.quote && post.quote.body ? post.quote : null;
+    const images = post && Array.isArray(post.images) ? post.images : [];
+
+    if (!post || (!post.body && !quote && images.length === 0)) {
+      return "";
+    }
+
+    const lines = post.body ? [post.body] : [];
+
+    if (quote) {
+      lines.push("", t("markdownQuoteSectionLabel", undefined, "Quoted Post:"));
+
+      const quotedAuthorText = formatAuthor(quote.author) || t("unknownAuthor", undefined, "Unknown author");
+      if (quotedAuthorText) {
+        lines.push(t("markdownAuthorLine", quotedAuthorText, `Author: ${quotedAuthorText}`));
+      }
 
       if (quote.time) {
         lines.push(t("markdownTimeLine", quote.time, `Time: ${quote.time}`));

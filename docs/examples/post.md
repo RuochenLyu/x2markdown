@@ -49,6 +49,35 @@ Images:
 - [图片 2](https://pbs.twimg.com/media/example-2.jpg?format=jpg&name=large)
 ```
 
+## 完整 thread
+
+```md
+作者: Example Author (@example)
+时间: 2026-03-18 16:30:00
+链接: https://x.com/example/status/1234567890123456789
+
+正文:
+这是一条 thread 的开场帖，里面保留了 **加粗重点** 和 [外部链接](https://example.com)。
+
+---
+
+1/ 第一条续帖会按原始顺序接在主贴后面。
+
+图片:
+- [图片 1](https://pbs.twimg.com/media/example-thread-1.jpg?format=jpg&name=large)
+
+---
+
+2/ 第二条续帖里的引用内容也会逐条保留。
+
+引用内容:
+作者: Quoted Author (@quoted)
+时间: 2024-01-02 12:55:59
+链接: https://x.com/quoted/status/9876543210987654321
+正文:
+> 这里展示 thread 导出中单条帖子的引用区块。
+```
+
 ## X Article
 
 ```md

@@ -12,13 +12,14 @@
 - 支持 `https://x.com/<user>/status/<id>`
 - 支持 `https://x.com/<user>/article/<id>`
 - 支持 `x.com` 各类时间线中可见的单条 post 卡片右键复制
+- 支持 `status` 详情页中“主贴 + 顶部连续自回复”的完整 thread 导出
 - 支持时间线中被截断正文的 post 在复制前自动展开“显示更多”
 - 支持运行时文案随 Chrome UI 语言在简体中文与英文之间切换
 - 支持正文中的普通链接
+- 支持 X 正文中的粗体、斜体、删除线和行内代码样式
 - 支持正文附件图片链接
 - 支持普通 post 中的 quoted post 作为附录输出
 - 通用网页模式使用 Readability + 本地 walker 提取正文
-- 不支持 thread 合并
 - 不支持视频、GIF、投票和评论导出
 
 ## 架构概览
@@ -70,6 +71,15 @@ flowchart LR
 - 正文：`data-testid="tweetText"`
 - 引用：同一 `article` 内第二组 `User-Name / time / tweetText`
 - 图片：`pbs.twimg.com/media` 附件图
+- 内联样式：兼容 `strong/em/code/del` 语义标签，以及 X 通过计算样式表达的粗体、斜体和删除线
+
+Thread：
+
+- 入口：仅限 `status` 详情页
+- 起点：当前 URL 对应的主贴
+- 范围：主贴后的顶部连续同作者帖子
+- 停止条件：遇到第一条非同作者且不是广告/噪音的帖子
+- 非目标：不并入评论区整段对话，也不导出作者后续零散回帖
 
 Article 或长文阅读视图：
 
@@ -132,6 +142,21 @@ X Article：
 {body}
 ```
 
+完整 thread：
+
+```md
+作者: {displayName} (@handle)
+时间: {datetime}
+链接: {url}
+
+正文:
+{body}
+
+---
+
+{body}
+```
+
 ## 关键取舍
 
 - 通用网页模式优先保证权限最小化，因此不声明全站 `host_permissions`。
@@ -142,10 +167,12 @@ X Article：
 - 入口改为 Chrome 原生右键菜单，避免继续跟页面内菜单结构耦合。
 - 信息流场景缓存最近一次右键命中的帖子和状态链接，节点被回收时按状态链接重定位。
 - “显示更多”只在当前命中的外层帖子作用域内展开，不跨帖子或整页批量点击。
+- Thread 主路径只收集顶部连续自回复，避免把评论区作者回帖误并入主线程。
 
 ## 已知脆弱点
 
 - `status` 页面详情区的主贴定位依赖当前 URL 和正文 DOM。
+- `status` 页面 thread 依赖 conversation 中帖子 DOM 的当前排序；如果 X 改变插入广告或排序策略，连续自回复边界可能受影响。
 - 信息流中的帖子节点可能被虚拟列表回收，重定位依赖帖子内可见的状态链接。
 - 时间线里的“显示更多”是异步加载行为，若 X 没有及时回填完整正文，提取结果仍可能保留截断内容。
 - 长文可能同时出现在 `status` 和 `article` 两种 URL 下，且 DOM 与普通 post 完全不同。
@@ -154,7 +181,7 @@ X Article：
 
 ## 后续可扩展方向
 
-- 支持 thread 合并导出
+- 支持整页 conversation 或评论区导出
 - 支持输出模板自定义
 - 支持 `twitter.com` 和 `mobile.x.com`
 - 支持更多浏览器语言
