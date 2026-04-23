@@ -22,9 +22,9 @@
 
 ---
 
-`x2markdown` is a Chrome extension that converts visible webpage content into clean Markdown with one right-click — ready to paste into LLM chats, append to personal knowledge bases, or save as `.md` reference files. On `x.com`, it additionally provides dedicated export for posts and longform articles.
+`x2markdown` is a Chrome extension. Right-click any page and it turns into clean Markdown — paste it into an LLM chat, drop it into your knowledge base, or save it as `.md`. On `x.com`, it also adds dedicated export for posts and longform articles.
 
-This project is primarily for showcase and personal use. It is open-sourced under the MIT license and does not accept external code contributions by default.
+A showcase and personal-use project. Open-sourced under MIT, but not actively accepting external contributions.
 
 ![x2markdown overview](./docs/images/overview.svg?v=2)
 
@@ -34,15 +34,15 @@ This project is primarily for showcase and personal use. It is open-sourced unde
   </a>
 </p>
 
-## What Problem Does It Solve
+## Why
 
-LLMs work best when they receive well-structured text. But getting content from a browser into that form is surprisingly manual:
+LLMs handle well-structured text best. But getting a browser page into that shape is surprisingly fiddly:
 
-- Dropping a link into an AI chat often fails to capture the full content or context.
-- Copying visible webpage content loses structure — titles, links, body text, and image URLs all need manual cleanup.
-- On `x.com`, blogs, documentation sites, forums, and issue pages, there is frequently content that is "visible to me but unreadable by AI."
+- Drop a link into an AI chat and it often misses the body or the surrounding context.
+- Copy straight from the browser and the structure is gone — titles, links, body, image URLs all need manual cleanup.
+- Across `x.com`, blogs, docs sites, forums, and issue pages, you keep running into content that's "visible to me but unreadable by AI."
 
-Whether you are pasting into a chat window, building an LLM-friendly knowledge base, or archiving web research as Markdown, `x2markdown` reduces the process to a single right-click.
+Whether you're pasting into a chat window, feeding a personal knowledge base, or archiving research as Markdown, `x2markdown` shortens the whole thing to one right-click.
 
 ## Features
 
@@ -70,12 +70,12 @@ Whether you are pasting into a chat window, building an LLM-friendly knowledge b
   - `https://x.com/<user>/article/<id>`
 - Supports right-click export of individual post cards visible in `x.com` feeds, lists, and search results.
 
-## Non-Goals
+## What It Doesn't Do
 
-- Does not export the full conversation page or other users' reply threads.
-- Does not capture video, GIF, poll results, or comment sections.
-- Does not attempt to bypass login walls, paywalls, or unrendered content.
-- Does not cover `twitter.com` or `mobile.x.com`.
+- No full-conversation export and no pulling other users' reply threads.
+- No video, GIF, poll results, or comment sections.
+- No bypassing login walls, paywalls, or unrendered content.
+- No `twitter.com` or `mobile.x.com`.
 
 ## Installation
 
@@ -145,29 +145,29 @@ Images:
 
 See [docs/examples/post.md](./docs/examples/post.md) for X post, thread, and X Article output examples.
 
-## Implementation Overview
+## How It Works
 
-- Uses native Manifest V3.
-- Uses Chrome's built-in `/_locales` mechanism to provide `zh_CN` and `en` runtime text; unmatched languages fall back to English.
-- Uses a `background service worker` to create the Chrome right-click menu.
-- Permission strategy is kept minimal:
-  - Generic webpages rely only on `activeTab + scripting + contextMenus + clipboardWrite`.
-  - No site-wide `host_permissions` are declared.
-  - Only `x.com` retains a persistent content script for timeline card targeting.
-- When the user clicks the menu item:
+- Native Manifest V3.
+- Localization via Chrome's `/_locales` — `zh_CN` and `en` are shipped, anything else falls back to English.
+- The right-click menu is created by a `background service worker`.
+- Permissions kept tight:
+  - Generic pages only need `activeTab + scripting + contextMenus + clipboardWrite`.
+  - No site-wide `host_permissions`.
+  - Only `x.com` keeps a persistent content script, used to target timeline cards on right-click.
+- When the menu is clicked:
   - `x.com` routes through the persistent `content-x.js`.
   - Other pages inject `shared.js + readability.js + content-generic.js` on demand.
-- Generic mode prioritizes selection; only attempts Readability for full-page extraction when there is no selection.
+- Generic mode copies the selection if there is one; otherwise it runs Readability on the full page.
 - When a truncated X post is hit in the timeline, the content script clicks `tweet-text-show-more-link` inside the target `article[data-testid="tweet"]` and waits for the text to expand before extracting.
-- On `status` detail pages, it starts from the main post and collects only the top consecutive posts from the same author; it stops at the first visible reply from someone else.
-- X extraction logic relies primarily on visible DOM and semantic nodes:
+- On `status` detail pages it starts at the main post and collects the top consecutive same-author replies; it stops at the first reply from someone else.
+- X extraction leans on visible DOM and semantic nodes:
   - `article[data-testid="tweet"]`
   - `time[datetime]`
   - `data-testid="User-Name"`
   - `data-testid="tweetText"`
   - `data-testid="twitterArticleReadView"`
   - `data-testid="twitter-article-title"`
-- Generic body extraction uses vendored `Mozilla Readability`, then converts structured content via a local Markdown walker.
+- Generic body extraction uses a vendored copy of `Mozilla Readability`, then a local Markdown walker converts the structured content.
 - Clipboard write prefers `navigator.clipboard.writeText()`, falling back to `document.execCommand('copy')`.
 
 ## Directory Structure
@@ -203,17 +203,17 @@ x2markdown/
 
 ## Known Limitations
 
-- X's DOM structure changes frequently; dedicated extraction logic may break.
-- Generic webpage mode is biased toward "article pages" rather than aggregate pages; homepages, navigation pages, and product pages work better with selection mode.
-- Full thread export on `status` pages only covers the main post plus the top consecutive self-replies, not the author's later scattered replies in the comment section.
-- Regular X posts have no native title, so no title field is output.
-- Some longform articles render directly as a reading view on `status` pages and are exported in longform format.
-- Timeline posts rely on the most recently right-clicked visible card; if no post is hit, the extension reports failure.
-- "Show more" depends on async rendering after a button click; if X does not return the full text, the extension extracts whatever is visible at that point.
+- X's DOM changes often, so the dedicated extraction logic can break at any time.
+- Generic mode is tuned for "article pages"; homepages, navigation pages, and product pages are better handled with selection mode.
+- Thread export on `status` pages only covers the main post and the consecutive same-author replies right after it — not the author's later scattered replies in the comment section.
+- Regular X posts have no native title, so no title field is emitted.
+- Some longform articles render directly as a reading view on `status` pages and get exported in the longform format.
+- Timeline posts rely on the most recently right-clicked visible card; if nothing is hit, the extension just reports failure.
+- "Show more" depends on async rendering after the click — if X doesn't return the full text, the extension takes whatever is visible at that point.
 - Only Simplified Chinese and English are built in; other browser languages fall back to English.
-- Iframes, login walls, paywalls, and lazy-loaded unrendered content are not guaranteed to be exportable.
+- Iframes, login walls, paywalls, and lazy-loaded unrendered content aren't guaranteed to export.
 
-See [docs/troubleshooting.md](./docs/troubleshooting.md) for common issues.
+For common issues, see [docs/troubleshooting.md](./docs/troubleshooting.md).
 
 ## Documentation
 
@@ -223,9 +223,9 @@ See [docs/troubleshooting.md](./docs/troubleshooting.md) for common issues.
 
 ## Open Source
 
-- License: MIT
-- Repository purpose: showcase and reusable implementation reference
-- Contribution policy: external PRs and issue workflow are not accepted by default
+- License: MIT.
+- Purpose: project showcase and a reference implementation to reuse.
+- Contributions: external PRs and issue workflow aren't accepted by default.
 
 ## License
 
