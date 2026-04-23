@@ -1,16 +1,38 @@
-# x2markdown
+<p align="center">
+  <img src="./icons/logo.png" width="96" height="96" alt="x2markdown" />
+</p>
 
-English | [中文](README.zh-CN.md)
+<h1 align="center">x2markdown</h1>
 
-<a href="https://chromewebstore.google.com/detail/x2markdown/acljfllclafamkhdjjkldogcadfbigmo">
-  <img src="https://raw.githubusercontent.com/GoogleChrome/webstore-docs/refs/heads/master/images/ChromeWebStore_BadgeWBorder_v2_496x150.png" alt="Available in the Chrome Web Store" width="248" height="75">
-</a>
+<p align="center">
+  Right-click any webpage — or <code>x.com</code> post — into clean Markdown, ready for your LLM workflow.
+</p>
+
+<p align="center">
+  <a href="https://chromewebstore.google.com/detail/x2markdown/acljfllclafamkhdjjkldogcadfbigmo">
+    <img src="https://img.shields.io/chrome-web-store/v/acljfllclafamkhdjjkldogcadfbigmo?label=Chrome%20Web%20Store" alt="Chrome Web Store" />
+  </a>
+  <img src="https://img.shields.io/badge/license-MIT-blue" alt="MIT" />
+  <img src="https://img.shields.io/badge/manifest-v3-success" alt="Manifest V3" />
+</p>
+
+<p align="center">
+  English · <a href="README.zh-CN.md">中文</a>
+</p>
+
+---
 
 `x2markdown` is a Chrome extension that converts visible webpage content into clean Markdown with one right-click — ready to paste into LLM chats, append to personal knowledge bases, or save as `.md` reference files. On `x.com`, it additionally provides dedicated export for posts and longform articles.
 
 This project is primarily for showcase and personal use. It is open-sourced under the MIT license and does not accept external code contributions by default.
 
 ![x2markdown overview](./docs/images/overview.svg?v=2)
+
+<p align="center">
+  <a href="https://chromewebstore.google.com/detail/x2markdown/acljfllclafamkhdjjkldogcadfbigmo">
+    <img src="https://raw.githubusercontent.com/GoogleChrome/webstore-docs/refs/heads/master/images/ChromeWebStore_BadgeWBorder_v2_496x150.png" alt="Available in the Chrome Web Store" width="248" height="75">
+  </a>
+</p>
 
 ## What Problem Does It Solve
 

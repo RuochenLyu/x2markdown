@@ -1,16 +1,38 @@
-# x2markdown
+<p align="center">
+  <img src="./icons/logo.png" width="96" height="96" alt="x2markdown" />
+</p>
 
-[English](README.md) | 中文
+<h1 align="center">x2markdown</h1>
 
-<a href="https://chromewebstore.google.com/detail/x2markdown/acljfllclafamkhdjjkldogcadfbigmo">
-  <img src="https://raw.githubusercontent.com/GoogleChrome/webstore-docs/refs/heads/master/images/ChromeWebStore_BadgeWBorder_v2_496x150.png" alt="Available in the Chrome Web Store" width="248" height="75">
-</a>
+<p align="center">
+  右键一次，把网页或 <code>x.com</code> 帖子变成干净的 Markdown，直接丢给你的 LLM。
+</p>
+
+<p align="center">
+  <a href="https://chromewebstore.google.com/detail/x2markdown/acljfllclafamkhdjjkldogcadfbigmo">
+    <img src="https://img.shields.io/chrome-web-store/v/acljfllclafamkhdjjkldogcadfbigmo?label=Chrome%20Web%20Store" alt="Chrome Web Store" />
+  </a>
+  <img src="https://img.shields.io/badge/license-MIT-blue" alt="MIT" />
+  <img src="https://img.shields.io/badge/manifest-v3-success" alt="Manifest V3" />
+</p>
+
+<p align="center">
+  <a href="README.md">English</a> · 中文
+</p>
+
+---
 
 `x2markdown` 是一个 Chrome 浏览器插件，右键一次就能把当前网页内容转成干净的 Markdown——可以直接粘进 LLM 对话、存进个人知识库、或保存为 `.md` 参考文件。在 `x.com` 上则额外保留帖子和长文的专用导出能力。
 
 这个项目以展示和自用为主，使用 MIT 协议开源，默认不接收外部代码贡献。
 
 ![x2markdown 示意图](./docs/images/overview.svg?v=2)
+
+<p align="center">
+  <a href="https://chromewebstore.google.com/detail/x2markdown/acljfllclafamkhdjjkldogcadfbigmo">
+    <img src="https://raw.githubusercontent.com/GoogleChrome/webstore-docs/refs/heads/master/images/ChromeWebStore_BadgeWBorder_v2_496x150.png" alt="Available in the Chrome Web Store" width="248" height="75">
+  </a>
+</p>
 
 ## 解决什么问题
 
