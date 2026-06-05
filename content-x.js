@@ -47,6 +47,7 @@
 
   const SELECTORS = {
     article: 'article[data-testid="tweet"]',
+    timelineCell: '[data-testid="cellInnerDiv"]',
     tweetText: '[data-testid="tweetText"]',
     tweetTextShowMore: '[data-testid="tweet-text-show-more-link"]',
     userName: '[data-testid="User-Name"]',
@@ -165,11 +166,194 @@
 
   async function extractStatusThreadPosts(mainArticle) {
     const articles = await collectStatusThreadArticles(mainArticle);
-    return articles.map((article, index) => {
-      return extractPostData(article, {
-        allowMediaOnly: index > 0
-      });
+    const posts = [];
+
+    for (let index = 0; index < articles.length; index += 1) {
+      posts.push(await extractPostData(articles[index], {
+        allowMediaOnly: index > 0,
+        expandQuotedPost: index === 0 && articles.length === 1
+      }));
+    }
+
+    return posts;
+  }
+
+  async function extractPostData(article, options = {}) {
+    const { allowMediaOnly = false, expandQuotedPost = false } = options;
+
+    if (!(article instanceof HTMLElement)) {
+      throw new Error(t("errorInvalidPostNode", undefined, "Invalid post node"));
+    }
+
+    const currentStatusId = getSupportedPageType(location.pathname) === "status" ? extractPathId(location.pathname, "status") : "";
+    const articleStatusId = extractStatusIdFromArticle(article);
+    const statusId = currentStatusId && articleHasStatusId(article, currentStatusId) ? currentStatusId : articleStatusId;
+    const author = extractAuthor(article);
+    const timeInfo = extractStatusTime(article, statusId);
+    const timeElement = timeInfo.element;
+    const statusUrl = extractStatusUrl(article, timeElement);
+    const textElement = findPrimaryTweetText(article);
+    let quote = extractQuotedPost(article, {
+      primaryTextNode: textElement,
+      currentStatusUrl: statusUrl
     });
+    const body = textElement ? normalizeMarkdownBlock(extractInlineMarkdown(textElement)) : "";
+    const images = extractPostImages(article, {
+      excludeContainer: quote ? quote.container : null
+    });
+
+    if (expandQuotedPost && quote && quote.isTruncated) {
+      quote = await expandQuotedPostData(quote);
+    }
+
+    if (!author.displayName && !author.handle) {
+      throw new Error(t("errorAuthorInfoNotFound", undefined, "Author information not found"));
+    }
+
+    if (!timeElement) {
+      throw new Error(t("errorPublishTimeNotFound", undefined, "Publish time not found"));
+    }
+
+    if (!statusUrl) {
+      throw new Error(t("errorPostLinkNotFound", undefined, "Post link not found"));
+    }
+
+    if (!body && !(allowMediaOnly && (images.length > 0 || quote))) {
+      throw new Error(t("errorBodyNotFound", undefined, "Body content not found"));
+    }
+
+    return {
+      kind: "post",
+      title: "",
+      author,
+      time: formatTimeValue(timeInfo.datetime, timeInfo.text),
+      url: statusUrl,
+      body,
+      images,
+      quote
+    };
+  }
+
+  async function expandQuotedPostData(quote) {
+    const fallbackQuote = quote;
+    const originalUrl = location.href;
+    const originalScrollX = window.scrollX;
+    const originalScrollY = window.scrollY;
+    const navigationTarget = findQuotedPostNavigationTarget(quote);
+
+    if (!(navigationTarget instanceof HTMLElement)) {
+      return fallbackQuote;
+    }
+
+    try {
+      navigationTarget.click();
+
+      const didNavigate = await waitForUrlChange(originalUrl, 3500);
+      if (!didNavigate || getSupportedPageType(location.pathname) !== "status") {
+        return fallbackQuote;
+      }
+
+      const quoteArticle = await waitForCurrentStatusArticle(5000);
+      const expandedArticle = await expandTweetTextIfNeeded(quoteArticle, {
+        resolveArticle: getStatusPageArticle
+      });
+      const expandedUrl = cleanPageUrl(location.href);
+      const post = await extractPostData(expandedArticle, {
+        allowMediaOnly: true,
+        expandQuotedPost: false
+      });
+
+      if (!post || !post.body || post.body.length <= fallbackQuote.body.length) {
+        return fallbackQuote;
+      }
+
+      return {
+        author: post.author,
+        time: post.time,
+        url: expandedUrl || post.url,
+        body: post.body,
+        images: post.images,
+        container: fallbackQuote.container,
+        isTruncated: false
+      };
+    } catch (error) {
+      return fallbackQuote;
+    } finally {
+      await restoreOriginalStatusPage(originalUrl, originalScrollX, originalScrollY);
+    }
+  }
+
+  function findQuotedPostNavigationTarget(quote) {
+    const container = quote && quote.container instanceof HTMLElement ? quote.container : null;
+    if (!container) {
+      return null;
+    }
+
+    if (container.matches('[role="link"]')) {
+      return container;
+    }
+
+    return container.closest('[role="link"]');
+  }
+
+  async function waitForUrlChange(originalUrl, timeout) {
+    const startedAt = Date.now();
+    const originalCleanUrl = cleanPageUrl(originalUrl);
+
+    while (Date.now() - startedAt < timeout) {
+      await wait(80);
+      if (cleanPageUrl(location.href) !== originalCleanUrl) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  async function waitForCurrentStatusArticle(timeout) {
+    const startedAt = Date.now();
+
+    while (Date.now() - startedAt < timeout) {
+      await wait(80);
+
+      try {
+        const article = getStatusPageArticle();
+        if (article instanceof HTMLElement) {
+          return article;
+        }
+      } catch (error) {
+        // The X route changed before the new status article finished rendering.
+      }
+    }
+
+    throw new Error(t("errorCurrentPostBodyNotFound", undefined, "Current post body not found"));
+  }
+
+  async function restoreOriginalStatusPage(originalUrl, scrollX, scrollY) {
+    if (cleanPageUrl(location.href) !== cleanPageUrl(originalUrl)) {
+      history.back();
+      await waitForSpecificUrl(originalUrl, 5000);
+    }
+
+    try {
+      window.scrollTo(scrollX, scrollY);
+    } catch (error) {
+      // Restoring scroll is best-effort after X re-renders the route.
+    }
+  }
+
+  async function waitForSpecificUrl(expectedUrl, timeout) {
+    const startedAt = Date.now();
+    const expectedCleanUrl = cleanPageUrl(expectedUrl);
+
+    while (Date.now() - startedAt < timeout) {
+      await wait(80);
+      if (cleanPageUrl(location.href) === expectedCleanUrl) {
+        return true;
+      }
+    }
+
+    return false;
   }
 
   async function extractCurrentArticlePage() {
@@ -382,14 +566,23 @@
       return collected;
     }
 
-    const conversationArticles = getStatusConversationArticles();
-    const startIndex = findStatusThreadStartIndex(conversationArticles, mainArticle, mainStatusId);
+    const conversationItems = getStatusConversationItems();
+    const startIndex = findStatusThreadStartIndex(conversationItems, mainArticle, mainStatusId);
     if (startIndex < 0) {
       return collected;
     }
 
-    for (let index = startIndex + 1; index < conversationArticles.length; index += 1) {
-      const candidate = conversationArticles[index];
+    for (let index = startIndex + 1; index < conversationItems.length; index += 1) {
+      const item = conversationItems[index];
+      if (item.type === "skip") {
+        continue;
+      }
+
+      if (item.type !== "article") {
+        break;
+      }
+
+      const candidate = item.article;
       const decision = classifyStatusThreadCandidate(candidate, mainHandle, seenStatusIds);
 
       if (decision.action === "skip") {
@@ -415,22 +608,85 @@
   }
 
   function getStatusConversationArticles() {
+    return getStatusConversationItems()
+      .filter((item) => item.type === "article")
+      .map((item) => item.article);
+  }
+
+  function getStatusConversationItems() {
     const main = document.querySelector("main");
     if (!(main instanceof HTMLElement)) {
       return [];
     }
 
-    return Array.from(main.querySelectorAll(SELECTORS.article)).filter((article) => {
+    return Array.from(main.querySelectorAll(SELECTORS.timelineCell))
+      .filter((cell) => {
+        return cell instanceof HTMLElement && !(cell.parentElement?.closest(SELECTORS.timelineCell) instanceof HTMLElement);
+      })
+      .map(classifyStatusTimelineCell);
+  }
+
+  function classifyStatusTimelineCell(cell) {
+    if (!(cell instanceof HTMLElement) || isIgnorableStatusTimelineCell(cell)) {
+      return {
+        type: "skip",
+        article: null
+      };
+    }
+
+    const article = findTopLevelTimelineArticle(cell);
+    if (article) {
+      return {
+        type: "article",
+        article
+      };
+    }
+
+    return {
+      type: "boundary",
+      article: null
+    };
+  }
+
+  function isIgnorableStatusTimelineCell(cell) {
+    if (!isVisible(cell)) {
+      return true;
+    }
+
+    const rect = cell.getBoundingClientRect();
+    if (rect.height <= 1) {
+      return true;
+    }
+
+    if (cell.closest('[data-testid="placementTracking"]')) {
+      return true;
+    }
+
+    const hasText = Boolean(normalizeText(cell.textContent));
+    const hasMedia = Boolean(cell.querySelector("img[src], video"));
+    const hasControl = Boolean(cell.querySelector("a[href], button, input, textarea, [role='button']"));
+
+    return !hasText && !hasMedia && !hasControl;
+  }
+
+  function findTopLevelTimelineArticle(cell) {
+    const articles = Array.from(cell.querySelectorAll(SELECTORS.article)).filter((article) => {
       if (!(article instanceof HTMLElement) || !isVisible(article)) {
+        return false;
+      }
+
+      if (article.closest(SELECTORS.timelineCell) !== cell) {
         return false;
       }
 
       return !(article.parentElement?.closest(SELECTORS.article) instanceof HTMLElement);
     });
+
+    return articles[0] || null;
   }
 
-  function findStatusThreadStartIndex(conversationArticles, mainArticle, mainStatusId) {
-    const directIndex = conversationArticles.findIndex((article) => article === mainArticle);
+  function findStatusThreadStartIndex(conversationItems, mainArticle, mainStatusId) {
+    const directIndex = conversationItems.findIndex((item) => item.type === "article" && item.article === mainArticle);
     if (directIndex >= 0) {
       return directIndex;
     }
@@ -439,7 +695,7 @@
       return -1;
     }
 
-    return conversationArticles.findIndex((article) => articleHasStatusId(article, mainStatusId));
+    return conversationItems.findIndex((item) => item.type === "article" && articleHasStatusId(item.article, mainStatusId));
   }
 
   function classifyStatusThreadCandidate(article, mainHandle, seenStatusIds) {
@@ -555,58 +811,6 @@
 
     const segments = pathname.split("/").filter(Boolean);
     return segments[2] || "";
-  }
-
-  function extractPostData(article, options = {}) {
-    const { allowMediaOnly = false } = options;
-
-    if (!(article instanceof HTMLElement)) {
-      throw new Error(t("errorInvalidPostNode", undefined, "Invalid post node"));
-    }
-
-    const currentStatusId = getSupportedPageType(location.pathname) === "status" ? extractPathId(location.pathname, "status") : "";
-    const articleStatusId = extractStatusIdFromArticle(article);
-    const statusId = currentStatusId && articleHasStatusId(article, currentStatusId) ? currentStatusId : articleStatusId;
-    const author = extractAuthor(article);
-    const timeInfo = extractStatusTime(article, statusId);
-    const timeElement = timeInfo.element;
-    const statusUrl = extractStatusUrl(article, timeElement);
-    const textElement = findPrimaryTweetText(article);
-    const quote = extractQuotedPost(article, {
-      primaryTextNode: textElement,
-      currentStatusUrl: statusUrl
-    });
-    const body = textElement ? normalizeMarkdownBlock(extractInlineMarkdown(textElement)) : "";
-    const images = extractPostImages(article, {
-      excludeContainer: quote ? quote.container : null
-    });
-
-    if (!author.displayName && !author.handle) {
-      throw new Error(t("errorAuthorInfoNotFound", undefined, "Author information not found"));
-    }
-
-    if (!timeElement) {
-      throw new Error(t("errorPublishTimeNotFound", undefined, "Publish time not found"));
-    }
-
-    if (!statusUrl) {
-      throw new Error(t("errorPostLinkNotFound", undefined, "Post link not found"));
-    }
-
-    if (!body && !(allowMediaOnly && (images.length > 0 || quote))) {
-      throw new Error(t("errorBodyNotFound", undefined, "Body content not found"));
-    }
-
-    return {
-      kind: "post",
-      title: "",
-      author,
-      time: formatTimeValue(timeInfo.datetime, timeInfo.text),
-      url: statusUrl,
-      body,
-      images,
-      quote
-    };
   }
 
   function extractArticleData(root) {
@@ -745,8 +949,23 @@
       url,
       body,
       images,
-      container: quoteContainer
+      container: quoteContainer,
+      isTruncated: isTweetTextTruncated(quoteTextNode)
     };
+  }
+
+  function isTweetTextTruncated(node) {
+    if (!(node instanceof HTMLElement)) {
+      return false;
+    }
+
+    const style = window.getComputedStyle(node);
+    const lineClamp = style.webkitLineClamp || style.lineClamp || node.style.webkitLineClamp || "";
+    if (lineClamp && lineClamp !== "none" && Number(lineClamp) > 0) {
+      return true;
+    }
+
+    return node.scrollHeight > node.clientHeight + 2;
   }
 
   function findQuotedPostContainer(article, quoteTextNode, quoteUserNode, primaryTextNode) {

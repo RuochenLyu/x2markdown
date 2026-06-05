@@ -69,7 +69,7 @@ flowchart LR
 - 时间：`time[datetime]`
 - 链接：时间节点对应的状态链接或第一个 `/status/` 链接
 - 正文：`data-testid="tweetText"`
-- 引用：同一 `article` 内第二组 `User-Name / time / tweetText`
+- 引用：同一 `article` 内第二组 `User-Name / time / tweetText`；单帖详情页中如果引用正文被 line-clamp 截断，临时进入引用帖详情页补全，失败时保留原预览
 - 图片：`pbs.twimg.com/media` 附件图
 - 内联样式：兼容 `strong/em/code/del` 语义标签，以及 X 通过计算样式表达的粗体、斜体和删除线
 
@@ -78,7 +78,7 @@ Thread：
 - 入口：仅限 `status` 详情页
 - 起点：当前 URL 对应的主贴
 - 范围：主贴后的顶部连续同作者帖子
-- 停止条件：遇到第一条非同作者且不是广告/噪音的帖子
+- 停止条件：遇到第一条非同作者且不是广告/噪音的帖子，或遇到可见的非帖子 timeline 分隔节点
 - 非目标：不并入评论区整段对话，也不导出作者后续零散回帖
 
 Article 或长文阅读视图：
